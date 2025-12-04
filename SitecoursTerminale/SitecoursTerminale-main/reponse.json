@@ -1,0 +1,146 @@
+{
+  "mole": {
+    "category": "Chimie - Matière",
+    "label": "La Mole",
+    "response": "La **mole** est l'unité de quantité de matière. C'est un 'paquet' contenant 6,02 × 10^{23} entités.",
+    "formula": "n = m / M",
+    "details": "n : quantité (mol) • m : masse (g) • M : masse molaire (g/mol).",
+    "example": "Exemple : 18g d'eau correspondent exactement à 1 mole de molécules H2O."
+  },
+  "concentrationMassique": {
+    "category": "Chimie - Matière",
+    "label": "Concentration Massique",
+    "response": "La **concentration massique** représente la masse de soluté dissous dans un litre de solvant.",
+    "formula": "C_m = m / V",
+    "details": "C_m : g/L • m : masse (g) • V : volume (L).",
+    "example": "Exemple : 10g de sucre dans 0.5L d'eau donne C_m = 20 g/L."
+  },
+  "concentrationMolaire": {
+    "category": "Chimie - Matière",
+    "label": "Concentration Molaire",
+    "response": "La **concentration molaire** est le nombre de moles de soluté par litre de solution.",
+    "formula": "C = n / V",
+    "details": "C : mol/L • n : moles • V : volume (L).",
+    "example": "Exemple : Une solution de sel à 0.1 mol/L."
+  },
+  "dilution": {
+    "category": "Chimie - Manipulation",
+    "label": "Dilution",
+    "response": "La **dilution** consiste à ajouter du solvant pour diminuer la concentration. La quantité de matière n ne change pas (conservation).",
+    "formula": "C_{mère} * V_{mère} = C_{fille} * V_{fille}",
+    "details": "Permet de calculer le volume de solution mère à prélever.",
+    "example": "Exemple : Pour diluer 10 fois, on prend 10mL de mère et on complète à 100mL."
+  },
+  "ph": {
+    "category": "Chimie - Acide/Base",
+    "label": "Le pH",
+    "response": "Le **pH** mesure l'acidité d'une solution. Il est lié à la concentration en ions oxonium H3O+.",
+    "formula": "pH = -log[H3O+]",
+    "details": "pH < 7 : Acide • pH = 7 : Neutre • pH > 7 : Basique.",
+    "example": "Exemple : Le jus de citron a un pH d'environ 2."
+  },
+  "titrage": {
+    "category": "Chimie - Dosage",
+    "label": "Titrage",
+    "response": "Un **titrage** permet de trouver une concentration inconnue en faisant réagir la solution avec un réactif titrant jusqu'à l'équivalence. ",
+    "formula": "C_A * V_A = C_B * V_B",
+    "details": "À l'équivalence, les réactifs sont introduits dans les proportions stœchiométriques.",
+    "example": "Exemple : Titrage du vinaigre (acide) par de la soude (base)."
+  },
+  "absorbance": {
+    "category": "Chimie - Dosage",
+    "label": "Absorbance (Beer-Lambert)",
+    "response": "L'**absorbance** mesure la quantité de lumière absorbée par une solution colorée. Elle est proportionnelle à la concentration.",
+    "formula": "A = k * C",
+    "details": "A : sans unité • C : concentration. (Loi de Beer-Lambert).",
+    "example": "Exemple : Plus une solution est foncée, plus son absorbance est élevée."
+  },
+  "oxydoreduction": {
+    "category": "Chimie - Réaction",
+    "label": "Oxydoréduction",
+    "response": "Une **oxydoréduction** est un transfert d'électrons entre un oxydant (qui en gagne) et un réducteur (qui en perd).",
+    "formula": "Ox + n e^- <=> Red",
+    "details": "L'oxydant se réduit, le réducteur s'oxyde.",
+    "example": "Exemple : La rouille est l'oxydation du fer par le dioxygène."
+  },
+  "gazParfait": {
+    "category": "Chimie - Thermo",
+    "label": "Gaz Parfaits",
+    "response": "Le modèle du **gaz parfait** lie les variables d'état d'un gaz à basse pression.",
+    "formula": "P * V = n * R * T",
+    "details": "P(Pa), V(m^3), n(mol), R=8.314, T(K). Attention aux unités !",
+    "example": "Exemple : Calculer la pression d'un gaz dans une enceinte fermée chauffée."
+  },
+  "loiOhm": {
+    "category": "Physique - Élec",
+    "label": "Loi d'Ohm",
+    "response": "La **loi d'Ohm** relie la tension et le courant dans une résistance.",
+    "formula": "U = R * I",
+    "details": "U : Tension (V) • R : Résistance (Ω) • I : Courant (A).",
+    "example": "Exemple : Pour R=10Ω et I=2A, la tension est 20V."
+  },
+  "loiNewton1": {
+    "category": "Physique - Méca",
+    "label": "Quelle est la 1ère Loi de Newton ",
+    "response": "La **1ère loi de Newton** (Principe d'Inertie) stipule que tout corps persévère dans son état de repos ou de mouvement rectiligne uniforme si la somme des forces extérieures qui s'exercent sur lui est nulle.",
+    "formula": "Si ΣF = 0, alors v = Cste",
+    "details": "La vitesse est constante (y compris $v=0$) si les forces se compensent.",
+    "example": "Exemple : Un objet laissé dans l'espace continue à se déplacer en ligne droite à vitesse constante."
+  },
+  "loiNewton": {
+    "category": "Physique - Méca",
+    "label": "Quelle est la 2ème Loi de Newton",
+    "response": "La **2ème loi de Newton** (PFD) explique comment les forces modifient le mouvement d'un objet.",
+    "formula": "ΣF = m * a",
+    "details": "La somme des forces égale la masse fois l'accélération.",
+    "example": "Exemple : La chute libre est régie par le poids P = m*g."
+  },
+  "loiNewton3": {
+    "category": "Physique - Méca",
+    "label": "Quelle est la 3ème Loi de Newton",
+    "response": "La **3ème loi de Newton** (Principe des actions réciproques) indique que si un corps A exerce une force $\\vec{F}_{A/B}$ sur un corps B, alors B exerce simultanément sur A une force $\\vec{F}_{B/A}$ de même intensité, de même direction, mais de sens opposé.",
+    "formula": "\\vec{F}_{A/B} = - \\vec{F}_{B/A}",
+    "details": "Ces deux forces ont des effets opposés et s'appliquent sur des corps différents.",
+    "example": "Exemple : Quand vous poussez un mur, le mur vous repousse avec la même force."
+  },
+  "travailForce": {
+    "category": "Physique - Méca",
+    "label": "Travail d'une force",
+    "response": "Le **travail** est l'énergie transférée par une force lors d'un déplacement.",
+    "formula": "W_AB(F) = F · AB = F * AB * cos(α)",
+    "details": "W en Joules (J). Si α < 90°, le travail est moteur.",
+    "example": "Exemple : Pousser un chariot fournit un travail moteur."
+  },
+  "energieCinetique": {
+    "category": "Physique - Énergie",
+    "label": "Énergie Cinétique",
+    "response": "L'**énergie cinétique** est l'énergie liée à la vitesse d'un objet.",
+    "formula": "E_c = 1/2 * m * v^2",
+    "details": "m (kg), v (m/s), Ec (J). Attention à la vitesse au carré !",
+    "example": "Exemple : Une voiture rapide a beaucoup d'énergie cinétique."
+  },
+  "energiePotentielle": {
+    "category": "Physique - Énergie",
+    "label": "Énergie Potentielle",
+    "response": "L'**énergie potentielle de pesanteur** est liée à l'altitude d'un objet.",
+    "formula": "E_p = m * g * h",
+    "details": "m(kg), g(9.81), h(m).",
+    "example": "Exemple : L'eau en haut d'un barrage possède de l'énergie potentielle."
+  },
+  "refraction": {
+    "category": "Physique - Optique",
+    "label": "Réfraction (Snell-Descartes)",
+    "response": "La **réfraction** est la déviation de la lumière quand elle change de milieu.",
+    "formula": "n1 * sin(i1) = n2 * sin(i2)",
+    "details": "n : indice du milieu • i : angle avec la normale.",
+    "example": "Exemple : Le 'crayon brisé' dans un verre d'eau."
+  },
+  "frequence": {
+    "category": "Physique - Ondes",
+    "label": "Fréquence et Période",
+    "response": "La **fréquence** est le nombre de répétitions par seconde. La période est la durée d'un motif.",
+    "formula": "f = 1 / T",
+    "details": "f en Hertz (Hz), T en secondes (s).",
+    "example": "Exemple : Le courant secteur est à 50Hz (50 oscillations par seconde)."
+  }
+}

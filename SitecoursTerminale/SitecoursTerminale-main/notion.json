@@ -1,0 +1,611 @@
+{
+  "chimie": [
+    {
+      "nom": "Acide de Brønsted",
+      "def": "Espèce capable de céder un proton H⁺.",
+      "img": "https://kronos-images.schoolmouv.fr/t-fnx-spc-c01-img02-.png"
+    },
+    {
+      "nom": "Alcane",
+      "def": "Hydrocarbure saturé avec uniquement des liaisons simples.",
+      "img": "https://www.universalis.fr/typo3temp/assets/_processed_/b/d/csm_v010702c_3ee2cedea5.webp"
+    },
+    {
+      "nom": "Alcène",
+      "def": "Hydrocarbure avec une double liaison C=C.",
+      "img": "https://magoerevision.com/imgUpload/imageExosMatiereidUrlInputtemps1588200454.png"
+    },
+    {
+      "nom": "Alcyne",
+      "def": "Hydrocarbure avec une triple liaison C$\\equiv$C.",
+      "img": "https://www.universalis.fr/typo3temp/assets/_processed_/0/d/csm_v010736_bc4b2ca581.webp"
+    },
+    {
+      "nom": "Anion",
+      "def": "Ion chargé négativement.",
+      "img": "https://www.geocities.ws/janevonne/images/anions.gif"
+    },
+    {
+      "nom": "Atome",
+      "def": "Plus petite unité de matière conservant les propriétés d’un élément.",
+      "img": "https://i.ytimg.com/vi/gcff_xpMeEQ/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGE4gZShlMA8=&rs=AOn4CLCUUh-Hsemarf-iXP8EUfwYWN1J7Q"
+    },
+    {
+      "nom": "Base de Brønsted",
+      "def": "Espèce capable de capter un proton H⁺.",
+      "img": "https://kronos-images.schoolmouv.fr/t-fnx-spc-c01-img02-.png"
+    },
+    {
+      "nom": "Catalyseur",
+      "def": "Substance qui accélère une réaction sans être consommée.",
+      "img": "https://www.fiches-auto.fr/sdoms/shiatsu/uploaded/echappement-catalyseur-transformation-3-voies-grand.gif"
+    },
+    {
+      "nom": "Cation",
+      "def": "Ion chargé positivement.",
+      "img": "https://general.chemistrysteps.com/wp-content/uploads/2022/04/Metals-That-Form-Cations-with-Different-Charges.png"
+    },
+    {
+      "nom": "Chaleur molaire",
+      "def": "Quantité de chaleur par mole pour un processus donné.",
+      "img": "https://via.placeholder.com/150"
+    },
+    {
+      "nom": "Concentration massique",
+      "def": "Masse de soluté par litre de solution (g/L).",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf0RPdawECANM8z564nxv8kLAmHC2KxR3j0Q&s"
+    },
+    {
+      "nom": "Concentration molaire (C)",
+      "def": "Quantité de matière par litre de solution (mol/L).",
+      "img": "https://www.aquaportail.com/pictures2308/concentration-molaire.jpg"
+    },
+    {
+      "nom": "Constante d’équilibre (K)",
+      "def": "Grandeur mesurant l’équilibre d’une réaction chimique.",
+      "img": "https://i.ytimg.com/vi/IidLHID95lA/maxresdefault.jpg"
+    },
+    {
+      "nom": "Couple redox",
+      "def": "Association oxydant / réducteur pour une réaction redox.",
+      "img": "https://beatricepresson.weebly.com/uploads/7/6/8/4/76842859/demi-quation-redox_orig.jpg"
+    },
+    {
+      "nom": "Dissociation",
+      "def": "Séparation d’un composé en ions dissous.",
+      "img": "https://www.aquaportail.com/pictures2111/dissociation.jpg"
+    },
+    {
+      "nom": "Électron",
+      "def": "Particule élémentaire chargée négativement autour du noyau.",
+      "img": "https://www.researchgate.net/publication/340225038/figure/fig28/AS:873607412580367@1585295646633/Differentes-interactions-electrons-matiere-a-lechelle-dun-atome-atome-de-carbone.jpg"
+    },
+    {
+      "nom": "Électronégativité",
+      "def": "Capacité d’un atome à attirer les électrons d’une liaison.",
+      "img": "https://images.nagwa.com/figures/explainers/683160642483/1.svg"
+    },
+    {
+      "nom": "Équation chimique",
+      "def": "Écriture symbolique d’une réaction chimique.",
+      "img": "https://www.pccl.fr/physique_chimie_college_lycee/quatrieme/cours_exercices_corriges/equation_bilan_combustion_methane_600.jpg"
+    },
+    {
+      "nom": "Équilibre chimique",
+      "def": "État où les vitesses directe et inverse d’une réaction sont égales.",
+      "img": "https://www.vulgarisation-scientifique.com/wiki/uploads/Reaction_chimique.png"
+    },
+    {
+      "nom": "Fonction acide carboxylique",
+      "def": "Groupe –COOH présent sur une molécule.",
+      "img": "https://images.nagwa.com/figures/explainers/538125945025/7.svg"
+    },
+    {
+      "nom": "Fonction alcool",
+      "def": "Groupe –OH attaché à un atome de carbone.",
+      "img": "https://images.nagwa.com/figures/explainers/832120910256/9.svg"
+    },
+    {
+      "nom": "Fonction amine",
+      "def": "Groupe –NH₂ fixée à un squelette carboné.",
+      "img": "https://www.aquaportail.com/pictures1811/groupes-amines.jpg"
+    },
+    {
+      "nom": "Fonction ester",
+      "def": "Groupe –COO– reliant deux chaînes carbonées.",
+      "img": "https://images.nagwa.com/figures/explainers/487173602805/2.svg"
+    },
+    {
+      "nom": "Gaz parfait",
+      "def": "Modèle de gaz obéissant à la loi PV = nRT.",
+      "img": "https://jeretiens.net/wp-content/uploads/2016/02/loi_gaz_parfaits_sch%C3%A9mas_expliqu%C3%A9.gif"
+    },
+    {
+      "nom": "Hydrocarbure",
+      "def": "Molécule constituée seulement de carbone et d’hydrogène.",
+      "img": "https://images.nagwa.com/figures/explainers/506131871960/1.svg"
+    },
+    {
+      "nom": "Ion",
+      "def": "Atome ou groupe d’atomes ayant gagné ou perdu des électrons.",
+      "img": "https://etab.ac-poitiers.fr/coll-jules-michelet-angouleme/sites/coll-jules-michelet-angouleme/IMG/jpg/fiche_decrypter_formule_ion.jpg"
+    },
+    {
+      "nom": "Isomère",
+      "def": "Molécules ayant la même formule brute mais des formes différentes.",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4yxtGknJgyx8dOxlAV5koVkzoAtA7aatlQg&s"
+    },
+    {
+      "nom": "Liaison covalente",
+      "def": "Partage d’électrons entre deux atomes.",
+      "img": "https://cdn-blog.superprof.com/blog_ressources_fr/wp-content/uploads/2017/03/representation-lewis.png"
+    },
+    {
+      "nom": "Liaison hydrogène",
+      "def": "Interaction faible entre un H et un atome électronégatif.",
+      "img": "https://webphysique.fr/wp-content/uploads/2018/04/liaison-hydrogene-ethanol.jpg"
+    },
+    {
+      "nom": "Liaison ionique",
+      "def": "Attraction électrostatique entre ions de charges opposées.",
+      "img": "https://chimiegenerale.ch/images/dessin-ioniques-NaCl.png"
+    },
+    {
+      "nom": "Masse molaire",
+      "def": "Masse d’une mole d’espèce chimique (g/mol).",
+      "img": "https://i.ytimg.com/vi/kBUcAKIgldY/sddefault.jpg"
+    },
+    {
+      "nom": "Mole",
+      "def": "Quantité de matière ($6,022\\times 10^{23}$ entités).",
+      "img": "https://i.ytimg.com/vi/8WKSzacpaE0/maxresdefault.jpg"
+    },
+    {
+      "nom": "Molécule",
+      "def": "Assemblage d’atomes liés entre eux par des liaisons chimiques.",
+      "img": "https://sciencesphysiques.e-monsite.com/medias/images/molecules.png"
+    },
+    {
+      "nom": "Neutralisation",
+      "def": "Réaction acide + base $\\to$ sel + eau.",
+      "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Neutralization_reaction.svg/200px-Neutralization_reaction.svg.png"
+    },
+    {
+      "nom": "Neutron",
+      "def": "Particule neutre du noyau atomique.",
+      "img": "https://www.biologie101.fr/images/chimie/atome/structure-atome.png"
+    },
+    {
+      "nom": "Numéro atomique (Z)",
+      "def": "Nombre de protons dans le noyau d’un atome.",
+      "img": "https://images.schoolmouv.fr/cycle4-pc-c14-img02.png"
+    },
+    {
+      "nom": "Oxydant",
+      "def": "Espèce qui capte des électrons.",
+      "img": "https://images.nagwa.com/figures/explainers/150184238473/1.svg"
+    },
+    {
+      "nom": "Oxydation",
+      "def": "Perte d’électrons par une espèce.",
+      "img": "https://i.ytimg.com/vi/jb_-8eFqqHw/maxresdefault.jpg"
+    },
+    {
+      "nom": "pH",
+      "def": "Mesure de l’acidité ou de la basicité d’une solution.",
+      "img": "https://s3.eu-central-1.amazonaws.com/studysmarter-mediafiles/media/1865576/summary_images/1865576/summary_images/pH_scale_3_tvaEiC6.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA4OLDUDE42UZHAIET%2F20251116%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20251116T091707Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=1a919f6f9a677a567444a82003c1f84e78adce82c7d1fbf0c02ac6b700c35128"
+    },
+    {
+      "nom": "Polymère",
+      "def": "Macromolécule constituée d’unités répétées (monomères).",
+      "img": "https://lh6.googleusercontent.com/proxy/e5pgEv-zie-UOcKeje2KmschS1gYZTQycxRcv2hAx6UWOXmmEhqMhDPEEpEoxYrUQQsYn8YTzh6EzgMz9Svetb5GFi3iMdfPAeOMi-TzXl-Ivspss8SphQ"
+    },
+    {
+      "nom": "Précipité",
+      "def": "Solide formé dans une solution suite à une réaction chimique.",
+      "img": "https://sciencesphysiques.e-monsite.com/medias/images/test-identification-ions.png?fx=r_800_315"
+    },
+    {
+      "nom": "Pression partielle",
+      "def": "Pression qu’exercerait un gaz seul dans un mélange.",
+      "img": "https://www.alloprof.qc.ca/zonedentraide/uploads/B6MQC1979HSA/image.png"
+    },
+    {
+      "nom": "Produit",
+      "def": "Espèce formée lors d’une réaction.",
+      "img": "https://media.kartable.fr/uploads/finalImages/final_5f3beb22350944.54775322.png?1755770265"
+    },
+    {
+      "nom": "Proton",
+      "def": "Particule du noyau portant une charge positive.",
+      "img": "https://www.biologie101.fr/images/chimie/atome/structure-atome.png"
+    },
+    {
+      "nom": "Réactif",
+      "def": "Espèce consommée dans une réaction chimique.",
+      "img": "https://parlonssciences.ca/sites/default/files/styles/x_large/public/2020-06/formation_et_rupture_de_liaisons_lors_de_la_combustion_du_methane.jpg?itok=pZLDO-bg"
+    },
+    {
+      "nom": "Réaction chimique",
+      "def": "Transformation où des réactifs deviennent des produits.",
+      "img": "https://www.aquaportail.com/pictures2108/types-reactions-chimiques.jpg"
+    },
+    {
+      "nom": "Réducteur",
+      "def": "Espèce qui donne des électrons.",
+      "img": "https://images.nagwa.com/figures/explainers/150184238473/1.svg "
+    },
+    {
+      "nom": "Réduction",
+      "def": "Gain d’électrons par une espèce.",
+      "img": "https://toutestchimie.home.blog/wp-content/uploads/2020/01/oxydo-reduction.png?w=564"
+    },
+    {
+      "nom": "Solubilité",
+      "def": "Quantité maximale de soluté pouvant se dissoudre dans un solvant.",
+      "img": "https://www.aquaportail.com/pictures2110/solubilite.jpg"
+    },
+    {
+      "nom": "Solution",
+      "def": "Mélange homogène soluté + solvant.",
+      "img": "https://diy7ta1tt6jst.cloudfront.net/prod/okulus/24dadda4-adf2-4261-9d45-031296a559ac"
+    },
+    {
+      "nom": "Solution acide",
+      "def": "Solution dont le pH est inférieur à 7.",
+      "img": "https://kronos-images.schoolmouv.fr/t-fnx-spc-c02-img01.png"
+    },
+    {
+      "nom": "Solution basique",
+      "def": "Solution dont le pH est supérieur à 7.",
+      "img": "https://restez-curieux.ovh/wp-content/uploads/2022/04/20220402ph-1-1024x584.png"
+    },
+    {
+      "nom": "Solution neutre",
+      "def": "Solution dont le pH est égal à 7.",
+      "img": "https://images.nagwa.com/figures/explainers/828175832193/1.svg"
+    },
+    {
+      "nom": "Solution tampon",
+      "def": "Solution qui résiste aux variations de pH lors d’ajout d’acide ou base.",
+      "img": "https://www.aquaportail.com/pictures2212/tampon-buffer.jpg"
+    },
+    {
+      "nom": "Soluté",
+      "def": "Espèce dissoute dans un solvant.",
+      "img": "https://media.kartable.fr/uploads/finalImages/final_5e81fcd4705436.99773701.png?1753090047"
+    },
+    {
+      "nom": "Solvant",
+      "def": "Composant majoritaire d’une solution.",
+      "img": "https://diy7ta1tt6jst.cloudfront.net/prod/okulus/24dadda4-adf2-4261-9d45-031296a559ac"
+    },
+    {
+      "nom": "Stœchiométrie",
+      "def": "Calcul des proportions quantitatives dans une réaction chimique.",
+      "img": "https://webphysique.fr/wp-content/uploads/2018/02/tableau-avancement-general.jpg"
+    },
+    { 
+      "nom":"Thermodynamique", 
+      "def":"Étude des échanges d’énergie.", 
+      "img":"https://tiplanet.org/modules/archives/downloads2/1427133315.58722/page1m.png" 
+    },    
+    {
+      "nom": "Titrage",
+      "def": "Méthode pour déterminer la concentration d’une solution.",
+      "img": "https://chimactiv.agroparistech.fr/resources/images/fiches/bases/titrage/titrage9.png"
+    },
+    {
+      "nom": "Transformation endothermique",
+      "def": "Réaction absorbant de l’énergie (la chaleur).",
+      "img": "https://www.pccl.fr/physique_chimie_college_lycee/lycee/seconde/cours_exercices_corriges/endothermique_exothermique.jpg"
+    },
+    {
+      "nom": "Transformation exothermique",
+      "def": "Réaction libérant de l’énergie (la chaleur).",
+      "img": "https://www.pccl.fr/physique_chimie_college_lycee/lycee/seconde/cours_exercices_corriges/endothermique_exothermique.jpg"
+    }
+  ],
+  "physique": [
+    {
+      "nom": "Accélération",
+      "def": "Variation de la vitesse par unité de temps.",
+      "img": "https://www.shutterstock.com/image-vector/average-acceleration-formula-speed-time-600nw-2214650801.jpg"
+    },
+    {
+      "nom": "Amplitude",
+      "def": "Valeur maximale de l’oscillation par rapport à l’équilibre.",
+      "img": "https://es-static.z-dn.net/files/d82/5d4842bbb20cf29cda87ed2522382fe9.jpg"
+    },
+    {
+      "nom": "Bobine (inductance)",
+      "def": "Enroulement conducteur capable de stocker de l’énergie magnétique.",
+      "img": "https://forums.futura-sciences.com/attachments/physique/376789d1541495778-inductance-bobine-induite-solenoid-calucl_inductances_wikipedia.png"
+    },
+    {
+      "nom": "Chaleur",
+      "def": "Énergie thermique transférée entre systèmes en raison d’une différence de température.",
+      "img": "https://i.ytimg.com/vi/kdHoJkluyf4/hqdefault.jpg"
+    },
+    {
+      "nom": "Champ électrique",
+      "def": "Région de l’espace où une charge subit une force électrique.",
+      "img": "https://i.ytimg.com/vi/HrRIRbiNV_I/maxresdefault.jpg"
+    },
+    {
+      "nom": "Champ magnétique",
+      "def": "Région de l’espace où des charges en mouvement subissent une force.",
+      "img": "https://i.ytimg.com/vi/roVLKGxcnPU/sddefault.jpg"
+    },
+    {
+      "nom": "Charge électrique",
+      "def": "Propriété fondamentale responsable des interactions électromagnétiques.",
+      "img": "https://i.ytimg.com/vi/9kLskUE5pLw/maxresdefault.jpg"
+    },
+    {
+      "nom": "Circuit parallèle",
+      "def": "Circuit dans lequel les composants sont connectés sur des branches séparées.",
+      "img": "https://c8.alamy.com/compfr/jhnd04/representation-de-l-etape-par-etape-de-simplification-le-circuit-electrique-et-la-formule-de-calcul-de-la-resistance-en-parallele-et-serie-conn-jhnd04.jpg"
+    },
+    {
+      "nom": "Circuit série",
+      "def": "Circuit dans lequel tous les composants sont connectés en ligne, partageant le même courant.",
+      "img": "https://static1.assistancescolaire.com/5/images/5ptr06i01.png"
+    },
+    {
+      "nom": "Condensateur",
+      "def": "Composant électrique qui stocke de l’énergie sous forme de charge.",
+      "img": "https://i.ytimg.com/vi/YUkJjYTZB_c/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLD7b0RW-d9p_FxKW7cDvNnx7KF08w"
+    },
+    {
+      "nom": "Conduction thermique",
+      "def": "Transfert d’énergie thermique à travers un matériau sans transport de matière.",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4T1hC9AjOkRbqQdxos3NFLapWrKO0vf1eBg&s"
+    },
+    {
+      "nom": "Constante gravitationnelle (G)",
+      "def": "Constante universelle intervenant dans la loi de gravité.",
+      "img": "https://trustmyscience.com/wp-content/uploads/2021/03/loi-gravitation-universelle-newton.jpeg"
+    },
+    {
+      "nom": "Convection",
+      "def": "Transfert de chaleur par déplacement de fluide.",
+      "img": "https://parlonssciences.ca/sites/default/files/2021-01/Courants_de_convection.png"
+    },
+    {
+      "nom": "Couple moteur",
+      "def": "Force de rotation exercée par un couple appliqué à un objet.",
+      "img": "https://mobylette.mobcustom.com/upload/logos/391-definition-du-couple-moteur.jpg"
+    },
+    {
+      "nom": "Courant électrique",
+      "def": "Déplacement orienté de charges électriques.",
+      "img": "https://lh4.googleusercontent.com/proxy/by1uDzszdgD5jD5c0cSxpZaGDlHpJDuaFxQrDA4-2xtq8MS9rgYK2Cwwb_H0X5w8qotaiAYWMKibLjFJYHMIw0x9eQb2-B_ZOBJ0pQD2iJNx"
+    },
+    {
+      "nom": "Densité",
+      "def": "Rapport entre la masse volumique d’un corps et celle de l’eau.",
+      "img": "https://www.editions-petiteelisabeth.fr/images/infos/densite_physique.png?1466422760"
+    },
+    {
+      "nom": "Diode",
+      "def": "Composant semi-conducteur qui laisse passer le courant dans un seul sens.",
+      "img": "https://cdn.xingosoftware.com/elektor/images/fetch/dpr_1/https%3A%2F%2Fwww.elektormagazine.fr%2Fassets%2Fupload%2Fimages%2F17%2F240299-001-94-original-figure4-1-cpvpng-20240523103638.png"
+    },
+    {
+      "nom": "Diffraction",
+      "def": "Écartement d’une onde à la traversée d’une ouverture.",
+      "img": "https://www.methodephysique.fr/diffraction_fenteter.jpg"
+    },
+    {
+      "nom": "Énergie cinétique",
+      "def": "Énergie d’un objet en mouvement.",
+      "img": "https://elearningphysiquechimie.fr/wp-content/uploads/2021/03/th.jpg"
+    },
+    {
+      "nom": "Énergie nucléaire",
+      "def": "Énergie libérée par fission ou fusion des noyaux atomiques.",
+      "img": "https://www.iaea.org/sites/default/files/fission_nucleaire.jpg"
+    },
+    {
+      "nom": "Énergie potentielle",
+      "def": "Énergie stockée selon la position ou la configuration.",
+      "img": "https://lh5.googleusercontent.com/proxy/V4LJoMn0OHgSRCpNBo6ktnjT4Aymh2oG8EXHRSH0-6hr2tpoTB7JlQl8Dpzal1FZcxtLoHyN2tzi6lBSb5Q-rDgGiJFwijU8OCh4906wloQ"
+    },
+    {
+      "nom": "Équilibre statique",
+      "def": "Situation où la somme des forces et moments est nulle.",
+      "img": "https://parlonssciences.ca/sites/default/files/styles/x_large/public/2020-11/coulombs_law.png?itok=63GyaGFM"
+    },
+    {
+      "nom": "Focale",
+      "def": "Distance entre le centre optique d’une lentille et son foyer.",
+      "img": "https://www.maxicours.com/se/media/img/5/9/0/9/590997.png"
+    },
+    {
+      "nom": "Force",
+      "def": "Action qui modifie le mouvement ou déforme un objet.",
+      "img": "https://i.ytimg.com/vi/PVRznD34g3M/maxresdefault.jpg"
+    },
+    {
+      "nom": "Fréquence",
+      "def": "Nombre d’oscillations par seconde d’une onde.",
+      "img": "https://lesonpeutilremplacerlavision.tech.blog/wp-content/uploads/2016/12/signal28.gif?w=700"
+    },
+    {
+      "nom": "Gaz parfait",
+      "def": "Modèle de gaz idéal vérifiant PV = nRT.",
+      "img": "https://jeretiens.net/wp-content/uploads/2016/02/loi_gaz_parfaits_sch%C3%A9mas_expliqu%C3%A9.gif"
+    },
+    {
+      "nom": "Gravitation",
+      "def": "Attraction entre deux masses proportionnelle à leurs masses et inversement au carré de leur distance.",
+      "img": "https://physiquechimie440707392.wordpress.com/wp-content/uploads/2020/08/force-gravitation-formule.png"
+    },
+    {
+      "nom": "Image réelle",
+      "def": "Image formée quand les rayons convergent réellement.",
+      "img": "https://media.kartable.fr/uploads/finalImages/final_5fae746103b812.88405797.png?1684743077"
+    },
+    {
+      "nom": "Image virtuelle",
+      "def": "Image formée par le prolongement des rayons sans convergence réelle.",
+      "img": "https://www.editions-petiteelisabeth.fr/images/infos/image_virtuelle.png?1466422867"
+    },
+    {
+      "nom": "Impulsion",
+      "def": "Quantité de mouvement transférée par une force agissant pendant un temps donné.",
+      "img": "https://elementaire.ijclab.in2p3.fr/wp-content/uploads/sites/5/2016/11/choc-classique-1.jpg"
+    },
+    {
+      "nom": "Induction électromagnétique",
+      "def": "Génération de tension par variation de flux magnétique.",
+      "img": "https://www.shutterstock.com/image-vector/isolated-vector-illustration-michael-faradays-260nw-2185821851.jpg"
+    },
+    {
+      "nom": "Interférence",
+      "def": "Superposition d’ondes créant des zones de renforcement ou d’annulation.",
+      "img": "https://www.maxicours.com/se/media/img/6/0/1/8/601836.png"
+    },
+    {
+      "nom": "Lentille",
+      "def": "Objet transparent déviant les rayons lumineux pour former une image.",
+      "img": "https://lh3.googleusercontent.com/proxy/SKJZXe3q9kzaABFzlYelflH4L4rOxlvJHF1ocoWN0RDNGGGxaCzNfhOdK4631vcW1GDoz-xsFi2aMIs8Se-LzjS1s_X4ZataALCdWuswdBA"
+    },
+    {
+      "nom": "Loi d’Ohm",
+      "def": "Relation U = R $\\times$ I entre tension, courant et résistance.",
+      "img": "https://i.ytimg.com/vi/sCZK5gDZROE/oar2.jpg?sqp=-oaymwEYCJUDENAFSFqQAgHyq4qpAwcIARUAAIhC&rs=AOn4CLA6S_jSWhhEpwKZ_24pjB-jJVDawg"
+    },
+    {
+      "nom": "Longueur d’onde",
+      "def": "Distance entre deux points identiques d’une onde.",
+      "img": "https://www.natureetconfort.fr/wp-content/uploads/2018/01/be8277938c_50034751_longueur-onde-f.jpg"
+    },
+    {
+      "nom": "Masse volumique",
+      "def": "Quantité de masse par unité de volume.",
+      "img": "https://www.aquaportail.com/pictures2306/masse-volumique-formule.jpg"
+    },
+    {
+      "nom": "Moment de force",
+      "def": "Tendance d’une force à faire tourner un objet autour d’un axe.",
+      "img": "https://i.ytimg.com/vi/a6ZBsUKpEi8/sddefault.jpg"
+    },
+    {
+      "nom": "Mouvement rectiligne uniforme",
+      "def": "Mouvement à vitesse constante en ligne droite.",
+      "img": "https://ressources.unisciel.fr/DAEU/physique/mecanique/res/figure08.gif"
+    },
+    {
+      "nom": "Onde",
+      "def": "Propagation d’une perturbation dans un milieu ou dans le vide.",
+      "img": "https://images.schoolmouv.fr/physique-chimie-tle-s-cours-1-img01.png"
+    },
+    {
+      "nom": "Oscillation",
+      "def": "Mouvement périodique autour d’une position d’équilibre.",
+      "img": "https://upload.wikimedia.org/wikipedia/commons/1/18/Oscillations_libres_conservatif.png"
+    },
+    {
+      "nom": "Pendule simple",
+      "def": "Système mécanique oscillant autour d’un point d’équilibre.",
+      "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Sch%C3%A9ma_pendule_simple.svg/250px-Sch%C3%A9ma_pendule_simple.svg.png"
+    },
+    {
+      "nom": "Période",
+      "def": "Temps nécessaire pour une oscillation complète.",
+      "img": "https://diy7ta1tt6jst.cloudfront.net/prod/okulus/17c8828b-bbb7-430a-9d2a-efd23bc02ef5"
+    },
+    {
+      "nom": "Poids",
+      "def": "Force d’attraction de la Terre sur un objet, P = m $\\times$ g.",
+      "img": "https://sciencesphysiques.e-monsite.com/medias/images/poids-et-masse.png?fx=r_600_232"
+    },
+    {
+      "nom": "Pression",
+      "def": "Force appliquée par unité de surface.",
+      "img": "https://www.suezwaterhandbook.fr/var/degremont/storage/images/media/images/formule-notions-de-physique-des-gaz-et-de-thermodynamique-loi-mariotte/69256-1-fre-FR/formule-Notions-de-physique-des-gaz-et-de-thermodynamique-Loi-mariotte_articlewidth.png"
+    },
+    {
+      "nom": "Pression d’un gaz",
+      "def": "Force exercée par les molécules d’un gaz contre les parois du contenant.",
+      "img": "https://i.ytimg.com/vi/YCvFQ6HqWpk/hq720_2.jpg?sqp=-oaymwEYCJUDENAFSFryq4qpAwoIARUAAIhC0AEB&rs=AOn4CLCou5g6mWxvB2sl-2nQ7pwCwHImNg"
+    },
+    {
+      "nom": "Puissance",
+      "def": "Énergie transférée par unité de temps.",
+      "img": "https://i.ytimg.com/vi/HuwnFwzdvjs/maxresdefault.jpg"
+    },
+    {
+      "nom": "Puissance électrique",
+      "def": "P = U \\times I, énergie délivrée par unité de temps.",
+      "img": "https://i.ytimg.com/vi/te5m2G1I5BI/maxresdefault.jpg"
+    },
+    {
+      "nom": "Quantité de mouvement",
+      "def": "Produit de la masse par la vitesse (p = m \\times v).",
+      "img": "https://image.slidesharecdn.com/notiontheoriquedesquantitesdesmouvements-230817170037-6b30cc20/75/Notion-Theorique-des-quantites-des-mouvements-pptx-6-2048.jpg"
+    },
+    {
+      "nom": "Radioactivité",
+      "def": "Processus de désintégration spontanée des noyaux instables.",
+      "img": "https://opus.u-paris.fr/catalog/download/physique-et-enjeux-de-societe/html/826?inline=1"
+    },
+    {
+      "nom": "Rayonnement thermique",
+      "def": "Emission d’énergie sous forme d’ondes électromagnétiques (chaleur).",
+      "img": "https://www.encyclopedie-environnement.org/app/uploads/2017/03/Rayonnement-thermique-corps-noir_couverture.jpg"
+    },
+    {
+      "nom": "Réflexion",
+      "def": "Changement de direction d’une onde au contact d’une surface.",
+      "img": "https://cdn.adam.nomadeducation.fr/media/a1bbaa3e-bda2-4ca8-8da5-0d017a92a546.png"
+    },
+    {
+      "nom": "Réfraction",
+      "def": "Déviation d’une onde lors du passage entre deux milieux.",
+      "img": "https://e-cours.univ-paris1.fr/modules/uved/envcal/html/rayonnement/2-rayonnement-matiere/ressources/images/refraction.png"
+    },
+    {
+      "nom": "Résistance des matériaux (RDM)",
+      "def": "Étude des contraintes, déformations et ruptures des matériaux.",
+      "img": "https://via.placeholder.com/150"
+    },
+    {
+      "nom": "Résistance électrique",
+      "def": "Propriété d’un matériau qui limite le passage du courant.",
+      "img": "https://via.placeholder.com/150"
+    },
+    {
+      "nom": "Spectre lumineux",
+      "def": "Distribution des longueurs d’onde de la lumière visible.",
+      "img": "https://images.schoolmouv.fr/2nd-spc-c14-img01.png"
+    },
+    {
+      "nom": "Température",
+      "def": "Mesure de l’agitation thermique des particules d’un corps.",
+      "img": "https://www.science.lu/sites/default/files/styles/large/public/temperatur_fr.jpg?itok=na0WzTF4"
+    },
+    {
+      "nom": "Tension électrique",
+      "def": "Différence de potentiel entre deux points.",
+      "img": "https://sciencesphysiquesdebussy.wordpress.com/wp-content/uploads/2018/12/ar2-e1-11-e1543758357285.jpg?w=740"
+    },
+    {
+      "nom": "Transfert thermique",
+      "def": "Mouvement d’énergie calorifique entre systèmes différents.",
+      "img": "https://www.maxicours.com/se/media/img/4/2/0/9/420950.jpg"
+    },
+    {
+      "nom": "Travail",
+      "def": "Transfert énergétique dû à l’action d’une force sur un déplacement.",
+      "img": "https://i.ytimg.com/vi/rdqL1pXyxkM/maxresdefault.jpg"
+    },
+    {
+      "nom": "Vitesse",
+      "def": "Distance parcourue par unité de temps.",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_HWPG4h7uZUc8pMCUt0L8370eq6l3txnXbw&s"
+    }
+  ]
+}

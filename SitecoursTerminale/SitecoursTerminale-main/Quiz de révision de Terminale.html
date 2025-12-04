@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQphyk9ejUn8W2sQ9h9tofy5rNyUdzq-5HSA&s">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Quiz de Révision – Terminale</title>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+:root { --text: white; }
+
+body {
+    font-family:'Poppins',system-ui,sans-serif;
+    margin:0;
+    color: var(--text);
+    padding: 40px 20px 40px 20px; /* Réduction du padding-top car le header est supprimé */
+    /* Utilisé une image de fond générique pour l'exemple */
+    background: url('https://img.freepik.com/photos-gratuite/rendu-3d-lumieres-techno-science-fiction-futuristes-creant-formes-cool-fond-cool_181624-32814.jpg') center/cover fixed;
+    min-height:100vh;
+}
+
+/* Quiz container */
+#quiz-container {
+    max-width: 800px;
+    background: #141a35;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #00d9ff;
+}
+
+/* Question cards */
+.question {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #1d244a;
+    border: 1px solid #00d9ff;
+    border-radius: 8px;
+}
+
+.question h3 {
+    color: #00d9ff;
+}
+
+/* Options radio buttons */
+.question label {
+    display: block;
+    margin: 5px 0;
+}
+
+/* Buttons */
+button {
+    background: #00d9ff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #009fcc;
+}
+
+/* Résultats */
+#resultats table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #000; 
+    background-color: #f8f9fa;
+}
+
+#resultats table, #resultats th, #resultats td {
+    border: 1px solid #dee2e6;
+}
+
+#resultats th {
+    background: #e9ecef;
+    padding: 10px;
+    color: #343a40;
+}
+
+#resultats td {
+    padding: 8px;
+    /* Style par défaut pour les cellules de résultats, sera écrasé par celluleStyle */
+    background: #ffffff;
+    color: #343a40;
+}
+</style>
+</head>
+
+<body>
+<div id="app">
+<div id="quiz-container">
+    <h1>Quiz de Révision – 1ère Année</h1>
+    <p>Réponds à toutes les questions puis clique sur “Valider”.</p>
+
+    <div v-if="questions.length > 0">
+        <div v-for="(q, index) in questions" :key="index" class="question">
+            <h3>Q{{ index+1 }}. {{ q.text }}</h3>
+
+            <label 
+                v-for="(opt, optIndex) in q.optionsMelangees"
+                :key="optIndex"
+            >
+                <input 
+                    type="radio"
+                    :name="'q'+index"
+                    :value="opt.originalIndex"
+                    v-model="reponses[index]"
+                >
+                {{ opt.text }}
+                <span></span>
+            </label>
+        </div>
+
+        <button @click="corrigerQuiz()">Valider mes réponses</button>
+    </div>
+    <div v-else>
+        <p>Chargement des questions...</p>
+    </div>
+
+    <div id="resultats" v-if="resultatsVisible">
+        <h2>Résultats</h2>
+        <p style="color: #00d9ff; font-size: 1.1em;">
+            Score final : <strong>{{ scoreFinal }} / {{ questions.length }}</strong>
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Votre réponse</th>
+                    <th>Bonne réponse</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(q,i) in questions" :key="i">
+                    <td>{{ q.text }}</td>
+                    <td>{{ texteReponseEleve(i) }}</td>
+                    <td>{{ q.options[q.answer] }}</td>
+                    <td :style="celluleStyle(i)">
+                        {{ reponses[i] == q.answer ? '✔ Correct' : '✘ Incorrect' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="color: #00d9ff; font-size: 1.1em;">
+            Commentaire : <strong>{{ commentaireGlobal }}</strong>
+        </p>
+
+        <button @click="genererPDF()">Générer le PDF</button>
+    </div>
+</div>
+</div>
+
+
+<script>
+// Le JSON des questions a été inséré dans le code pour éviter le besoin de fetch()
+const questionData = {
+  "mecanique": [
+    {
+      "text": "Quelle est l'unité de la force dans le SI ?",
+      "options": [
+        "Newton",
+        "Joule",
+        "Watt",
+        "Pascal"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "La vitesse est la dérivée de quelle grandeur ?",
+      "options": [
+        "Position",
+        "Accélération",
+        "Force",
+        "Énergie"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "L'accélération d'un corps est proportionnelle à la force et inversement proportionnelle à sa masse. Qui a formulé cette loi ?",
+      "options": [
+        "Newton",
+        "Einstein",
+        "Galilée",
+        "Archimède"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Une masse de 2 kg est soumise à une force de 10 N. Quelle est son accélération ?",
+      "options": [
+        "2 m/s²",
+        "5 m/s²",
+        "10 m/s²",
+        "20 m/s²"
+      ],
+      "answer": 1,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Quelle est l'énergie cinétique d'un objet de masse m et de vitesse v ?",
+      "options": [
+        "m*v",
+        "1/2*m*v²",
+        "m*v²",
+        "2*m*v²"
+      ],
+      "answer": 1,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Qu'est-ce que l'inertie ?",
+      "options": [
+        "Résistance au changement de mouvement",
+        "Force",
+        "Énergie",
+        "Vitesse"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "MRUA signifie ?",
+      "options": [
+        "Mouvement rectiligne uniforme accéléré",
+        "Mouvement circulaire",
+        "Force nulle",
+        "Accélération variable"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Relation fréquence et période ?",
+      "options": [
+        "f=T",
+        "f=1/T",
+        "f*T",
+        "f+T"
+      ],
+      "answer": 1,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Moment d'une force ?",
+      "options": [
+        "M=F*d",
+        "M=F/d",
+        "M=d/F",
+        "M=F+d"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Différence entre vecteur vitesse et accélération ?",
+      "options": [
+        "Direction et grandeur",
+        "Même chose",
+        "Seulement grandeur",
+        "Pas de différence"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Qu'appelle-t-on poids d'un corps ?",
+      "options": [
+        "Force gravitationnelle",
+        "Masse multipliée par vitesse",
+        "Énergie potentielle",
+        "Résistance au mouvement"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Quelle est la formule de l'accélération moyenne ?",
+      "options": [
+        "Δv/Δt",
+        "v×t",
+        "v/t²",
+        "t/Δv"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Deuxième loi de Newton ?",
+      "options": [
+        "F=ma",
+        "F=G×(m1×m2)/r²",
+        "E=mc²",
+        "P=F/A"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Énergie potentielle gravitationnelle ?",
+      "options": [
+        "Ep=½mv²",
+        "Ep=mgh",
+        "Ep=mv²",
+        "Ep=mg"
+      ],
+      "answer": 1,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Définition du travail d'une force ?",
+      "options": [
+        "W=F*d",
+        "W=F/d",
+        "W=F+d",
+        "W=F²*d"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Qu'est-ce que la vitesse instantanée ?",
+      "options": [
+        "Vitesse à un instant précis",
+        "Vitesse moyenne",
+        "Distance parcourue",
+        "Accélération"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Un corps en mouvement rectiligne uniforme a :",
+      "options": [
+        "Accélération nulle",
+        "Vitesse constante",
+        "Force nulle",
+        "Énergie nulle"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Loi de la conservation de la quantité de mouvement ?",
+      "options": [
+        "p=constante",
+        "F=ma",
+        "E=mc²",
+        "v=Δx/Δt"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Énergie mécanique totale ?",
+      "options": [
+        "E=Ec+Ep",
+        "E=F*d",
+        "E=½mv²",
+        "E=mgh"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Rapport vitesse et rayon dans un mouvement circulaire uniforme ?",
+      "options": [
+        "v=ω*r",
+        "v=r/ω",
+        "v=ω/r",
+        "v=2πr"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Qu'est-ce que la friction cinétique ?",
+      "options": [
+        "Force opposée au mouvement",
+        "Force qui accélère",
+        "Énergie stockée",
+        "Vitesse changeante"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Deux forces opposées et égales créent :",
+      "options": [
+        "Équilibre",
+        "Accélération",
+        "Rotation",
+        "Travail"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Comment s'appelle la trajectoire d'un objet en chute libre ?",
+      "options": [
+        "Parabolique",
+        "Rectiligne",
+        "Circulaire",
+        "Zigzag"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Loi des moments ?",
+      "options": [
+        "ΣM=0",
+        "F=ma",
+        "E=mc²",
+        "p=mv"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Quel est le centre de gravité d'un objet ?",
+      "options": [
+        "Point d'application de la gravité",
+        "Point de rotation",
+        "Point d'énergie",
+        "Masse nulle"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Qu'appelle-t-on impulsion d'une force ?",
+      "options": [
+        "J=F*Δt",
+        "J=F/Δt",
+        "J=F+Δt",
+        "J=Δt/F"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Énergie potentielle élastique ?",
+      "options": [
+        "1/2*k*x²",
+        "mgh",
+        "½*mv²",
+        "F*d"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Formule de la vitesse finale dans une chute libre ?",
+      "options": [
+        "v=√(2gh)",
+        "v=gh",
+        "v=½gh²",
+        "v=g/h"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Quelle grandeur reste constante dans un pendule simple idéal ?",
+      "options": [
+        "Énergie mécanique",
+        "Vitesse instantanée",
+        "Amplitude",
+        "Accélération"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Qu'est-ce que la tension ?",
+      "options": [
+        "Force appliquée sur un fil",
+        "Énergie",
+        "Masse",
+        "Vitesse"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Qu'appelle-t-on moment d'inertie ?",
+      "options": [
+        "Répartition de la masse par rapport à un axe",
+        "Force",
+        "Vitesse",
+        "Énergie"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Loi de Hooke ?",
+      "options": [
+        "F=-k*x",
+        "E=mc²",
+        "F=ma",
+        "p=mv"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Qu'est-ce qu'un oscillateur harmonique ?",
+      "options": [
+        "Mouvement périodique",
+        "Force constante",
+        "Énergie nulle",
+        "Vitesse nulle"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Qu'appelle-t-on fréquence ?",
+      "options": [
+        "Nombre de cycles par seconde",
+        "Vitesse moyenne",
+        "Accélération",
+        "Distance parcourue"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Formule de la période d'un pendule ?",
+      "options": [
+        "T=2π√(L/g)",
+        "T=L/g",
+        "T=√(g/L)",
+        "T=2πg/L"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Quelle force maintient un objet en orbite ?",
+      "options": [
+        "Centripète",
+        "Centrifuge",
+        "Gravitation",
+        "Friction"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Qu'appelle-t-on énergie dissipée ?",
+      "options": [
+        "Énergie perdue sous forme de chaleur",
+        "Énergie cinétique",
+        "Énergie potentielle",
+        "Travail mécanique"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Qu'est-ce que le rendement d'un système ?",
+      "options": [
+        "Rapport énergie utile/énergie dépensée",
+        "Énergie totale",
+        "Vitesse moyenne",
+        "Force appliquée"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Unité du moment d'une force ?",
+      "options": [
+        "N·m",
+        "Joule",
+        "Watt",
+        "Pascal"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Vitesse angulaire ?",
+      "options": [
+        "ω=θ/t",
+        "ω=θ*t",
+        "ω=θ+1",
+        "ω=θ-1"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Qu'est-ce que le centre de masse ?",
+      "options": [
+        "Point moyen de la masse",
+        "Point de force",
+        "Point de vitesse",
+        "Point énergétique"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Loi gravitationnelle ?",
+      "options": [
+        "F=G*m1*m2/r²",
+        "F=ma",
+        "E=mc²",
+        "p=mv"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Travail d'une force constante ?",
+      "options": [
+        "W=F*d*cosθ",
+        "W=F*d",
+        "W=F/d",
+        "W=F²*d"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Vitesse tangentielle ?",
+      "options": [
+        "v=r*ω",
+        "v=ω/r",
+        "v=r/ω",
+        "v=2πr"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Énergie mécanique conservée dans un système isolé ?",
+      "options": [
+        "Oui",
+        "Non",
+        "Parfois",
+        "Seulement si forces nulles"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Force résultante ?",
+      "options": [
+        "Somme vectorielle des forces",
+        "Force maximale",
+        "Force moyenne",
+        "Force appliquée"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Un objet lancé verticalement atteint vitesse nulle en ?",
+      "options": [
+        "Sommet",
+        "Milieu",
+        "Début",
+        "Fin"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Principe de Pascal ?",
+      "options": [
+        "Pression transmise intégralement",
+        "Force égale",
+        "Énergie conserve",
+        "Vitesse constante"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Principe d'Archimède ?",
+      "options": [
+        "Poussée égale au poids du fluide déplacé",
+        "Force égale",
+        "Énergie conserve",
+        "Vitesse constante"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Mouvement sous force constante ?",
+      "options": [
+        "MRUA",
+        "MRU",
+        "Chute libre",
+        "Oscillation"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    }
+  ],
+  "electricite": [
+    {
+      "text": "Quel est l'unité de la tension électrique ?",
+      "options": [
+        "Volt",
+        "Ampère",
+        "Ohm",
+        "Watt"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Quel instrument mesure le courant électrique ?",
+      "options": [
+        "Voltmètre",
+        "Ampèremètre",
+        "Ohmmètre",
+        "Oscilloscope"
+      ],
+      "answer": 1,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Loi d'Ohm ?",
+      "options": [
+        "U=R*I",
+        "F=ma",
+        "E=mc²",
+        "p=mv"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Deux résistances identiques en série, Rtot ?",
+      "options": [
+        "R/2",
+        "R",
+        "2R",
+        "R²"
+      ],
+      "answer": 2,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Formule puissance électrique ?",
+      "options": [
+        "P=U*I",
+        "P=U/I",
+        "P=I/U",
+        "P=R*I"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Charge d'un électron ?",
+      "options": [
+        "-1,602×10^-19 C",
+        "0",
+        "+1,602×10^-19 C",
+        "Variable"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Conducteurs et isolants ?",
+      "options": [
+        "Cuivre et bois",
+        "Fer et plastique",
+        "Aluminium et verre",
+        "Argent et air"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Loi de Coulomb ?",
+      "options": [
+        "F=k*q1*q2/r²",
+        "F=ma",
+        "F=U*I",
+        "F=R*I"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Tension vs courant ?",
+      "options": [
+        "Tension=diff potentiel",
+        "Même",
+        "Courant=diff potentiel",
+        "Aucune"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Énergie stockée dans un condensateur ?",
+      "options": [
+        "E=½CV²",
+        "E=CV²",
+        "E=½CV",
+        "E=CV"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Un circuit en série a-t-il le même courant partout ?",
+      "options": [
+        "Oui",
+        "Non",
+        "Parfois",
+        "Seulement sur un conducteur"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Un circuit en parallèle a-t-il la même tension sur chaque branche ?",
+      "options": [
+        "Oui",
+        "Non",
+        "Parfois",
+        "Seulement si résistances égales"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Intensité du courant I = ?",
+      "options": [
+        "I=Q/t",
+        "I=U/R",
+        "I=P/U",
+        "I=R/U"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Résistance équivalente de deux résistances en parallèle R1 et R2 ?",
+      "options": [
+        "R1+R2",
+        "R1*R2/(R1+R2)",
+        "R1/R2",
+        "R1²+R2²"
+      ],
+      "answer": 1,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Un fil électrique idéal est-il conducteur parfait ?",
+      "options": [
+        "Oui",
+        "Non",
+        "Parfois",
+        "Seulement à basse température"
+      ],
+      "answer": 1,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Énergie dissipée dans une résistance ?",
+      "options": [
+        "E=R*I²*t",
+        "E=½R*I²*t",
+        "E=R/I",
+        "E=I²/R"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Puissance dissipée dans une résistance R par un courant I ?",
+      "options": [
+        "P=R*I²",
+        "P=I²/R",
+        "P=R/I",
+        "P=R*I"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Un électroaimant fonctionne grâce à ?",
+      "options": [
+        "Courant électrique",
+        "Champ magnétique",
+        "Gravité",
+        "Force centrifuge"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Champ magnétique autour d’un fil parcouru par un courant ?",
+      "options": [
+        "Circulaire autour du fil",
+        "Rectiligne",
+        "Parallèle au fil",
+        "Aucun"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Loi de Lenz ?",
+      "options": [
+        "Sens du courant induit s’oppose au changement",
+        "Sens du courant toujours positif",
+        "Courant constant",
+        "Tension nulle"
+      ],
+      "answer": 0,
+      "difficulty": "difficile"
+    },
+    {
+      "text": "Inductance ?",
+      "options": [
+        "L = flux/variation courant",
+        "L = R*I",
+        "L = U*I",
+        "L = Q/V"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Un transformateur élévateur augmente ?",
+      "options": [
+        "Tension",
+        "Courant",
+        "Résistance",
+        "Puissance"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Un transformateur abaisseur diminue ?",
+      "options": [
+        "Tension",
+        "Courant",
+        "Résistance",
+        "Puissance"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Un circuit RC en charge, tension aux bornes du condensateur ?",
+      "options": [
+        "V=V0*(1-e^(-t/RC))",
+        "V=V0*t",
+        "V=V0/RC",
+        "V=V0*RC"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Un circuit RL en décharge, courant ?",
+      "options": [
+        "I=I0*e^(-R/L*t)",
+        "I=I0*t",
+        "I=I0*R/L",
+        "I=I0*L/R"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Superposition des courants dans un noeud ?",
+      "options": [
+        "ΣI entrant = ΣI sortant",
+        "ΣI=0",
+        "I constant",
+        "I dépend du temps"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Unités de la capacité C ?",
+      "options": [
+        "Farad",
+        "Volt",
+        "Ampère",
+        "Ohm"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Charge Q = ?",
+      "options": [
+        "Q=C*U",
+        "Q=I*R",
+        "Q=U/I",
+        "Q=R*I"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Énergie potentielle d’un condensateur ?",
+      "options": [
+        "E=½C*U²",
+        "E=C*U²",
+        "E=U²/2C",
+        "E=C/U"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Courant alternatif (AC) fréquence ?",
+      "options": [
+        "50 Hz en Europe",
+        "60 Hz en Europe",
+        "50 kHz",
+        "60 kHz"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Courant continu (DC) tension ?",
+      "options": [
+        "Constante",
+        "Variable",
+        "Sinusoïdale",
+        "Exponentielle"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Impédance Z d’un circuit RL ?",
+      "options": [
+        "Z=√(R²+(ωL)²)",
+        "Z=R+L",
+        "Z=R/L",
+        "Z=R*L"
+      ],
+      "answer": 0,
+      "difficulty": "difficile"
+    },
+    {
+      "text": "Impédance Z d’un circuit RC ?",
+      "options": [
+        "Z=√(R²+(1/ωC)²) ",
+        "Z=R+C",
+        "Z=R/C",
+        "Z=R*C"
+      ],
+      "answer": 0,
+      "difficulty": "difficile"
+    },
+    {
+      "text": "Formule du courant alternatif efficace ?",
+      "options": [
+        "Ieff=I0/√2",
+        "Ieff=I0",
+        "Ieff=2*I0",
+        "Ieff=√2*I0"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Puissance moyenne AC ?",
+      "options": [
+        "P=Ueff*Ieff*cosφ",
+        "P=U*I",
+        "P=R*I²",
+        "P=½*U0*I0"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Phénomène self-inductif ?",
+      "options": [
+        "Variation du courant crée tension opposée",
+        "Augmente résistance",
+        "Diminue tension",
+        "Rien"
+      ],
+      "answer": 0,
+      "difficulty": "difficile"
+    },
+    {
+      "text": "Courant de fuite d’un condensateur ?",
+      "options": [
+        "Très faible",
+        "Élevé",
+        "Nul",
+        "Variable"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Oscilloscope mesure ?",
+      "options": [
+        "Tension en fonction du temps",
+        "Courant",
+        "Résistance",
+        "Puissance"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Intensité maximale d’un AC ?",
+      "options": [
+        "Imax",
+        "Ieff",
+        "Imin",
+        "I0/2"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Facteur de puissance cosφ = ?",
+      "options": [
+        "P/S",
+        "I*U",
+        "R/L",
+        "U/I"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Pont de Wheatstone sert à ?",
+      "options": [
+        "Mesurer résistance",
+        "Mesurer courant",
+        "Mesurer tension",
+        "Mesurer puissance"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Effet Joule ?",
+      "options": [
+        "Dissipation thermique par courant",
+        "Magnétisme",
+        "Chute de tension",
+        "Stockage énergie"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Conductivité électrique σ ?",
+      "options": [
+        "Inverse résistance spécifique",
+        "Direct résistance",
+        "Tension/courant",
+        "R*I"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Réseau triphasé tension ?",
+      "options": [
+        "Tension phase-phase √3 fois phase-neutre",
+        "Même",
+        "Moins",
+        "Variable"
+      ],
+      "answer": 0,
+      "difficulty": "difficile"
+    },
+    {
+      "text": "Circuit RL série phase ?",
+      "options": [
+        "Courant en retard sur tension",
+        "Courant en avance",
+        "Même phase",
+        "Indépendant"
+      ],
+      "answer": 0,
+      "difficulty": "difficile"
+    },
+    {
+      "text": "Circuit RC série phase ?",
+      "options": [
+        "Courant en avance sur tension",
+        "Courant en retard",
+        "Même phase",
+        "Indépendant"
+      ],
+      "answer": 0,
+      "difficulty": "difficile"
+    },
+    {
+      "text": "Oscillateur LC fréquence ?",
+      "options": [
+        "f=1/(2π√(LC))",
+        "f=L/C",
+        "f=LC",
+        "f=2π√(LC)"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Diode permet ?",
+      "options": [
+        "Courant dans un seul sens",
+        "Courant constant",
+        "Courant alternatif",
+        "Résistance nulle"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Transistor NPN sert à ?",
+      "options": [
+        "Amplifier ou commuter",
+        "Mesurer",
+        "Stocker charge",
+        "Transformer tension"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Résistance interne d’une pile ?",
+      "options": [
+        "Cause chute de tension",
+        "Aucune influence",
+        "Diminue énergie",
+        "Augmente courant"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Courant de court-circuit ?",
+      "options": [
+        "Très élevé",
+        "Très faible",
+        "Nul",
+        "Variable"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Fusible protège ?",
+      "options": [
+        "Circuit contre surintensité",
+        "Tension",
+        "Résistance",
+        "Puissance"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Électricité statique ?",
+      "options": [
+        "Accumulation charges immobiles",
+        "Courant",
+        "Tension",
+        "Résistance"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Induction électromagnétique ?",
+      "options": [
+        "Courant induit par champ magnétique variable",
+        "Courant constant",
+        "Courant alternatif",
+        "Tension constante"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    }
+  ],
+  "atomes": [
+    {
+      "text": "Nombre de protons dans un atome d'oxygène ?",
+      "options": [
+        "6",
+        "8",
+        "16",
+        "12"
+      ],
+      "answer": 1,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Un ion positif est appelé ?",
+      "options": [
+        "Cation ",
+        "Anion",
+        "Neutron",
+        "Proton"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Électron de valence est ?",
+      "options": [
+        "Dans le noyau",
+        "Dans la couche externe",
+        "Toujours un proton",
+        "Indéterminé"
+      ],
+      "answer": 1,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Symbole Na ?",
+      "options": [
+        "Sodium",
+        "Neon",
+        "Nickel",
+        "Azote"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Gaz nobles ?",
+      "options": [
+        "Inertes",
+        "Réactifs",
+        "Métaux",
+        "Liquides"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Nombre de neutrons dans le carbone 12 ?",
+      "options": [
+        "6",
+        "12",
+        "14",
+        "8"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Nombre de protons dans le fer ?",
+      "options": [
+        "26",
+        "56",
+        "30",
+        "28"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Isotope d’un élément ?",
+      "options": [
+        "Même nombre de protons, différent nombre de neutrons",
+        "Même neutrons, différent protons",
+        "Différents électrons",
+        "Différents éléments"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Masse atomique relative ?",
+      "options": [
+        "Moyenne des masses isotopiques",
+        "Masse d’un proton",
+        "Masse d’un électron",
+        "Masse du neutron"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Électron = charge ?",
+      "options": [
+        "-1,602×10^-19 C",
+        "+1,602×10^-19 C",
+        "0",
+        "Variable"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Nombre de protons de l’hydrogène ?",
+      "options": [
+        "1",
+        "2",
+        "0",
+        "3"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Nombre d’électrons d’un atome neutre ?",
+      "options": [
+        "Égal au nombre de protons",
+        "Toujours 8",
+        "Toujours 0",
+        "Toujours 1"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Qu’est-ce qu’un anion ?",
+      "options": [
+        "Ion négatif ",
+        "Ion positif",
+        "Électron",
+        "Proton"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Structure atomique de Bohr ?",
+      "options": [
+        "Noyau + électrons en couches",
+        "Noyau seul",
+        "Électrons libres",
+        "Neutrons mobiles"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Charge proton ?",
+      "options": [
+        "+1,602×10^-19 C",
+        "-1,602×10^-19 C",
+        "0",
+        "Variable"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Quel élément a 2 électrons de valence ?",
+      "options": [
+        "Calcium",
+        "Oxygène",
+        "Chlore",
+        "Hydrogène"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Électron célibataire ?",
+      "options": [
+        "Non apparié dans la couche externe",
+        "Toujours dans le noyau",
+        "Toujours apparié",
+        "Neutre"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Règle de l’octet ?",
+      "options": [
+        "État stable avec 8 électrons de valence",
+        "Toujours 8 neutrons",
+        "Toujours 8 protons",
+        "Toujours 8 électrons totaux"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Qu’est-ce que le numéro atomique ?",
+      "options": [
+        "Nombre de protons",
+        "Nombre de neutrons",
+        "Nombre d’électrons",
+        "Masse totale"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Qu’est-ce que le nombre de masse ?",
+      "options": [
+        "Protons + neutrons",
+        "Électrons seulement",
+        "Neutrons seulement",
+        "Protons seulement"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Énergie d’un électron dans un atome ?",
+      "options": [
+        "Quantifiée",
+        "Continue",
+        "Variable aléatoire",
+        "Toujours nulle"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Couche K = ?",
+      "options": [
+        "2 électrons max",
+        "8 électrons max",
+        "18 électrons max",
+        "32 électrons max"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Couche L = ?",
+      "options": [
+        "8 électrons max",
+        "2",
+        "18",
+        "32"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Couche M = ?",
+      "options": [
+        "18 électrons max",
+        "2",
+        "8",
+        "32"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Électron libre dans un métal ?",
+      "options": [
+        "Peut se déplacer ",
+        "Bloqué",
+        "Dans le noyau",
+        "Non existant"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Qu’est-ce que la configuration électronique ?",
+      "options": [
+        "Répartition des électrons dans les couches",
+        "Nombre de neutrons",
+        "Nombre de protons",
+        "Nombre de nucléons"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Ion polyatomique ?",
+      "options": [
+        "Plusieurs atomes liés avec charge",
+        "Un seul atome chargé",
+        "Électron libre",
+        "Neutron libre"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Nombre de neutrons dans l’uranium 238 ?",
+      "options": [
+        "146",
+        "92",
+        "238",
+        "146 ou 92"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Isotope stable de l’hydrogène ?",
+      "options": [
+        "Protium",
+        "Deutérium",
+        "Tritium",
+        "Hydrogène-4"
+      ],
+      "answer": 0,
+      "difficulty": "facile"
+    },
+    {
+      "text": "Énergie de liaison nucléaire ?",
+      "options": [
+        "Énergie qui maintient le noyau",
+        "Énergie cinétique",
+        "Énergie potentielle",
+        "Énergie électrique"
+      ],
+      "answer": 0,
+      "difficulty": "difficile"
+    },
+    {
+      "text": "Rayonnement alpha ?",
+      "options": [
+        "2 protons + 2 neutrons",
+        "Un électron",
+        "Un neutron",
+        "Un proton"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Rayonnement bêta ?",
+      "options": [
+        "Électron ou positron",
+        "Alpha",
+        "Gamma",
+        "Proton"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Rayonnement gamma ?",
+      "options": [
+        "Rayonnement électromagnétique",
+        "Particule",
+        "Neutron",
+        "Electron"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    },
+    {
+      "text": "Masse neutron ?",
+      "options": [
+        "Approximativement 1 u.m.a.",
+        "Nulle",
+        "Égale à celle du proton",
+        "Égale à celle de l'électron"
+      ],
+      "answer": 0,
+      "difficulty": "moyen"
+    }
+  ]
+}
+
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            questions: [],
+            reponses: [],
+            scoreFinal: 0,
+            resultatsVisible: false,
+            NOMBRE_QUESTIONS: 20
+        };
+    },
+
+    computed: {
+        commentaireGlobal() {
+            const p = (this.scoreFinal / this.questions.length) * 100;
+            if (p === 100) return "Excellent ! Bravo 👏";
+            if (p >= 80) return "Très bon travail !";
+            if (p >= 60) return "Correct, continue ainsi.";
+            if (p >= 40) return "Peut mieux faire.";
+            return "Révise davantage pour progresser.";
+        }
+    },
+
+    methods: {
+        // Style dynamique pour résultat
+        celluleStyle(i) {
+            return this.reponses[i] == this.questions[i].answer
+                ? "background:#d4edda; color:#155724;"
+                : "background:#f8d7da; color:#721c24;";
+        },
+
+        texteReponseEleve(i) {
+            return this.reponses[i] == null 
+                ? "Aucune réponse" 
+                : this.questions[i].options[this.reponses[i]];
+        },
+
+        corrigerQuiz() {
+            this.scoreFinal = 0;
+
+            this.questions.forEach((q, i) => {
+                if (this.reponses[i] == q.answer) this.scoreFinal++;
+            });
+
+            this.resultatsVisible = true;
+        },
+
+        // PDF
+        genererPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(16);
+            doc.text("Résultats du Quiz - 1ère Année", 10, 15);
+            doc.setFontSize(12);
+            doc.text(`Score Final : ${this.scoreFinal} / ${this.questions.length}`, 10, 25);
+            doc.text(`Commentaire : ${this.commentaireGlobal}`, 10, 33);
+
+            doc.autoTable({
+                startY: 40,
+                head: [['Question', 'Votre réponse', 'Bonne réponse', 'Statut']],
+                body: this.questions.map((q,i)=>[
+                    q.text,
+                    this.texteReponseEleve(i),
+                    q.options[q.answer],
+                    this.reponses[i] == q.answer ? "✔ Correct" : "✘ Incorrect"
+                ]),
+                theme: 'grid'
+            });
+
+            doc.save("Resultats_Quiz.pdf");
+        },
+
+        chargerQuestions() {
+            // Puisque le JSON est maintenant intégré, on l'utilise directement
+            let allQuestions = [
+                ...(questionData.mecanique || []),
+                ...(questionData.electricite || []),
+                ...(questionData.atomes || []),
+                // L'objet 'reactions' n'existe pas dans le JSON fourni, on le laisse mais il sera vide.
+                ...(questionData.reactions || []) 
+            ];
+
+            allQuestions = allQuestions.sort(() => Math.random() - 0.5);
+            allQuestions = allQuestions.slice(0, this.NOMBRE_QUESTIONS);
+
+            // Mélange des options pour chaque question
+            allQuestions = allQuestions.map(q => {
+                const optMel = q.options.map((opt, i) => ({
+                    text: opt,
+                    originalIndex: i
+                })).sort(() => Math.random() - 0.5);
+                
+                return {
+                    ...q,
+                    optionsMelangees: optMel
+                };
+            });
+            this.questions = allQuestions;
+            this.reponses = Array(this.questions.length).fill(null);
+        }
+    },
+
+    mounted() {
+        this.chargerQuestions();
+    }
+}).mount('#app');
+</script>
+</body>
+</html>

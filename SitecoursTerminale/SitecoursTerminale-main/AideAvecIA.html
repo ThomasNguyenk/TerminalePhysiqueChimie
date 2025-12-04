@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQphyk9ejUn8W2sQ9h9tofy5rNyUdzq-5HSA&s">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Assistant IA Physique-Chimie</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+    <style>
+        /* --- 1. Variables CSS --- */
+        :root {
+            --color-primary: #1e3a8a;
+            --color-secondary: #fcd34d;
+            --color-text-dark: #333333;
+            --color-text-light: #ffffff;
+            --color-bg-light: #f4f7f6;
+            --color-hover: #102a6a;
+        }
+
+        /* --- 2. Body & Arrière-plan --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: url("https://img.freepik.com/vecteurs-libre/arriere-plan-cyber-futuriste-gradient_23-2149117429.jpg") no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 70px;
+            color: var(--color-text-light);
+        }
+        
+        /* --- 3. Header / Nav --- */
+        .header-nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background-color: var(--color-primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000; height: 60px;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .nav-content {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 1200px; padding: 0 20px;
+        }
+
+        .logo { color: var(--color-secondary); font-size: 1.5em; font-weight: 700; text-decoration: none; display: flex; align-items: center; }
+        .logo i { margin-right: 8px; color: var(--color-text-light); }
+        
+        .menu-links { display: flex; gap: 20px; }
+        .menu-links a { color: var(--color-text-light); text-decoration: none; font-weight: 600; padding: 5px 10px; border-bottom: 2px solid transparent; transition: 0.3s; }
+        .menu-links a:hover, .menu-links a.active { color: var(--color-secondary); border-bottom: 2px solid var(--color-secondary); }
+        .burger-menu { display: none; color: var(--color-text-light); font-size: 1.5em; cursor: pointer; }
+
+        /* --- 4. Chat Box Container --- */
+        .container {
+            background: var(--color-text-light);
+            border-radius: 18px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+            width: 95%; max-width: 600px;
+            height: 85vh; display: flex; flex-direction: column;
+            overflow: hidden; margin: 20px 0;
+        }
+        
+        .header { background-color: var(--color-primary); color: var(--color-text-light); padding: 15px; text-align: center; border-bottom: 3px solid var(--color-secondary); }
+        .header h1 { margin: 0; font-size: 1.4em; }
+        .header p { margin: 5px 0 0; font-size: 0.85em; opacity: 0.9; }
+        
+        .chat-container { flex-grow: 1; padding: 20px; overflow-y: auto; background-color: var(--color-bg-light); scroll-behavior: smooth; }
+
+        .message { display: flex; margin-bottom: 20px; max-width: 90%; }
+        .message.user { justify-content: flex-end; margin-left: auto; }
+        .message.ai { justify-content: flex-start; }
+        
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 0.8em; font-weight: bold; margin-top: 5px;
+        }
+        .message.ai .avatar { background-color: var(--color-primary); color: white; margin-right: 10px; }
+        .message.user .avatar { background-color: var(--color-secondary); color: #333; margin-left: 10px; order: 2; }
+
+        .message-content {
+            padding: 12px 16px; border-radius: 12px; line-height: 1.5; font-size: 0.95em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); word-wrap: break-word;
+        }
+        .message.ai .message-content { background: white; color: var(--color-text-dark); border-top-left-radius: 2px; }
+        .message.user .message-content { background: var(--color-primary); color: white; border-top-right-radius: 2px; }
+        
+        /* Styles spécifiques au contenu IA */
+        .message-content h3 { color: var(--color-primary); margin: 0 0 8px 0; font-size: 1.1em; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .ai-section { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #ddd; }
+        .ai-section h4 { color: var(--color-primary); font-size: 0.9em; margin: 0 0 4px 0; }
+        
+        .formula {
+            display: block; text-align: center; background: #f8faff; 
+            border: 1px solid #e0e7ff; border-radius: 6px; padding: 8px; 
+            margin: 8px 0; font-size: 1.1em; overflow-x: auto;
+        }
+        .formula-details { font-size: 0.85em; color: #666; padding-left: 10px; border-left: 3px solid var(--color-secondary); margin-top: 5px; }
+        .ai-example { background: #f1f5f9; padding: 8px; border-radius: 6px; margin-top: 10px; font-style: italic; font-size: 0.9em; color: #444; }
+
+        /* Contrôles */
+        .examples { padding: 10px 15px; background: #fff; border-top: 1px solid #eee; }
+        .selectors-container { display: flex; gap: 10px; margin-bottom: 8px; }
+        select { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-family: inherit; }
+        .example-buttons { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
+        .example-btn { 
+            background: #eef2ff; color: var(--color-primary); border: 1px solid #c7d2fe; 
+            padding: 6px 12px; border-radius: 20px; font-size: 0.85em; cursor: pointer; white-space: nowrap; 
+        }
+        .example-btn:hover { background: var(--color-primary); color: white; }
+
+        .input-container { display: flex; padding: 15px; background: white; border-top: 1px solid #eee; }
+        #user-input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-family: inherit; }
+        #user-input:focus { border-color: var(--color-primary); }
+        #send-btn { 
+            width: 45px; height: 45px; border-radius: 50%; border: none; margin-left: 10px; 
+            background: var(--color-primary); color: white; cursor: pointer; display: flex; justify-content: center; align-items: center; 
+        }
+        #send-btn:hover { background: var(--color-hover); }
+
+        .loading-msg { font-style: italic; color: #666; text-align: center; margin: 10px; }
+        .error-msg { color: #dc3545; text-align: center; margin: 10px; font-size: 0.9em; }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .menu-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; width: 100%; background: var(--color-primary); }
+            .menu-links.open { display: flex; }
+            .burger-menu { display: block; }
+            .container { height: 90vh; margin: 5px; width: 98%; }
+            .selectors-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body onload="initChat()">
+
+    <header class="header-nav">
+        <div class="nav-content">
+            <a href="AideAvecIA.html" class="logo"><i class="fas fa-flask"></i> Aide IA</a>
+            <nav class="menu-links" id="menuLinks">
+                <a href="index.html">Accueil</a>
+                <a href="Terminale.html">Cours</a>
+                <a href="Quiz de révision de Terminale.html">Quiz</a>
+                <a href="espaceNote.html">Notes</a>
+                <a href="AideAvecIA.html" class="active">Questions à l'IA</a>
+                <a href="MiniDéfi.html">Défi</a>
+                <a href="AnnexeMotClé.html">Glossaire</a>
+                <a href="Connexion.html">Connexion</a>
+            </nav>
+            <div class="burger-menu" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-brain"></i> Assistant IA</h1>
+            <p>Pose ta question sur les concepts de 1ère !</p>
+        </div>
+
+        <div class="chat-container" id="chat-container">
+            <div class="message ai">
+                <div class="avatar"><i class="fas fa-robot"></i></div> 
+                <div class="message-content">
+                    <h3>Bonjour !</h3>
+                    <p>Je suis ton assistant expert. Je charge mes connaissances...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="examples">
+            <div class="selectors-container">
+                <select id="category-select" onchange="populateTopicSelect()">
+                    <option value="">-- Chargement... --</option>
+                </select>
+                <select id="topic-select">
+                    <option value="">-- Choisir un sujet --</option>
+                </select>
+                <button class="example-btn" style="background:var(--color-secondary); color:#333; border:none;" onclick="askSelectedExample()">Demander</button>
+            </div>
+            
+            <div class="example-buttons">
+                <button class="example-btn" onclick="askExample('Explique la mole')">La Mole</button>
+                <button class="example-btn" onclick="askExample('Loi d\'Ohm')">Loi d'Ohm</button>
+                <button class="example-btn" onclick="askExample('Forces de Newton')">Newton</button>
+                <button class="example-btn" onclick="askExample('C\'est quoi le pH ?')">pH</button>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Ta question (ex: formule énergie cinétique)..." onkeypress="handleKeyPress(event)">
+            <button id="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button> 
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('menuLinks').classList.toggle('open');
+        }
+
+        // Variable globale pour stocker les données chargées
+        let knowledgeBase = {};
+
+        // --- LOGIQUE JAVASCRIPT ---
+
+        async function initChat() {
+            // Message d'attente dans le selecteur
+            const catSelect = document.getElementById('category-select');
+            
+            try {
+                // Chargement du fichier JSON
+                const response = await fetch('reponse.json');
+                if (!response.ok) throw new Error("Erreur HTTP " + response.status);
+                
+                knowledgeBase = await response.json();
+                
+                // Mise à jour de l'interface une fois chargé
+                populateCategorySelect();
+                
+                // Petit message dans le chat pour dire que c'est prêt
+                addMessage("Mes connaissances sont chargées ! Tu peux me poser une question sur la chimie ou la physique.", 'ai');
+                
+                renderMathInElement(document.body);
+
+            } catch (error) {
+                console.error("Erreur de chargement:", error);
+                addMessage("Oups, je n'arrive pas à accéder à ma base de connaissances. Vérifie que tu utilises un serveur local (CORS).", 'ai');
+                catSelect.innerHTML = '<option value="">Erreur de chargement</option>';
+            }
+        }
+
+        function populateCategorySelect() {
+            const categories = new Set();
+            for (let key in knowledgeBase) {
+                categories.add(knowledgeBase[key].category);
+            }
+            const select = document.getElementById('category-select');
+            select.innerHTML = '<option value="">-- Choisir un domaine --</option>';
+            
+            categories.forEach(cat => {
+                let option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                select.appendChild(option);
+            });
+        }
+
+        function populateTopicSelect() {
+            const category = document.getElementById('category-select').value;
+            const topicSelect = document.getElementById('topic-select');
+            topicSelect.innerHTML = '<option value="">-- Choisir un sujet --</option>';
+            
+            for (let key in knowledgeBase) {
+                if (knowledgeBase[key].category === category) {
+                    let option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = knowledgeBase[key].label;
+                    topicSelect.appendChild(option);
+                }
+            }
+        }
+
+        function askSelectedExample() {
+            const key = document.getElementById('topic-select').value;
+            if (key && knowledgeBase[key]) {
+                const label = knowledgeBase[key].label;
+                askExample(`Parle-moi de : ${label}`, key);
+            }
+        }
+
+        function askExample(question, key = null) {
+            // Affiche la question utilisateur
+            addMessage(question, 'user');
+            
+            // Trouve la réponse
+            let responseKey = key;
+            if (!responseKey) {
+                responseKey = findBestMatch(question);
+            }
+
+            setTimeout(() => {
+                if (responseKey && knowledgeBase[responseKey]) {
+                    displayKnowledge(knowledgeBase[responseKey]);
+                } else {
+                    // Gestion si la base n'est pas chargée ou réponse non trouvée
+                    if (Object.keys(knowledgeBase).length === 0) {
+                        addMessage("Je suis encore en train de charger mes connaissances, attends une seconde...", 'ai');
+                    } else {
+                        addMessage("Je ne suis pas sûr de comprendre. Essaie des mots-clés comme 'pH', 'Force', 'Mole' ou 'Ohm'.", 'ai');
+                    }
+                }
+            }, 500);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const text = input.value.trim();
+            if (text) {
+                askExample(text);
+                input.value = '';
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function addMessage(html, type) {
+            const chat = document.getElementById('chat-container');
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            
+            let icon = type === 'ai' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+            
+            div.innerHTML = `
+                <div class="avatar">${icon}</div>
+                <div class="message-content">${html}</div>
+            `;
+            
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function displayKnowledge(data) {
+            const chat = document.getElementById('chat-container');
+            const div = document.createElement('div');
+            div.className = 'message ai';
+            
+            // Construction du contenu HTML de la réponse
+            let content = `
+                <h3><i class="fas fa-book-open"></i> ${data.label}</h3>
+                <p>${data.response}</p>
+                
+                <div class="ai-section">
+                    <h4><i class="fas fa-calculator"></i> Formule :</h4>
+                    <span class="formula">$$ ${data.formula} $$</span>
+                    <div class="formula-details">${data.details}</div>
+                </div>
+
+                <div class="ai-example">
+                    <i class="fas fa-lightbulb"></i> ${data.example}
+                </div>
+            `;
+
+            div.innerHTML = `
+                <div class="avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content">${content}</div>
+            `;
+            
+            chat.appendChild(div);
+            
+            // Rendu des maths avec KaTeX sur le nouveau message
+            renderMathInElement(div, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ]
+            });
+            
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function findBestMatch(text) {
+            text = text.toLowerCase();
+            // Recherche simple par mots-clés dans les clés ou les labels
+            for (let key in knowledgeBase) {
+                const item = knowledgeBase[key];
+                if (text.includes(key.toLowerCase()) || 
+                    text.includes(item.label.toLowerCase()) ||
+                    (item.keywords && item.keywords.some(k => text.includes(k)))) {
+                    return key;
+                }
+            }
+            // Mapping manuel pour les synonymes courants
+            if (text.includes("vitesse") || text.includes("cinétique")) return "energieCinetique";
+            if (text.includes("hauteur") || text.includes("altitude")) return "energiePotentielle";
+            if (text.includes("lumière") || text.includes("snell")) return "refraction";
+            if (text.includes("dosage")) return "titrage";
+            if (text.includes("matière")) return "mole";
+            
+            return null;
+        }
+    </script>
+</body>
+</html>

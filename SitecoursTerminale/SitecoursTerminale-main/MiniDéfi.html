@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQphyk9ejUn8W2sQ9h9tofy5rNyUdzq-5HSA&s">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Mini-défis Physique-Chimie Interactifs (VueJS)</title>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root {
+      --card:#fff;--accent:#007bff;--muted:#6c757d;
+      --success:#28a745;--error:#dc3545;--text:#212529;--neon:#00bfff;
+    }
+    *{box-sizing:border-box;scroll-behavior:smooth;}
+    body {
+      font-family:'Poppins',system-ui,sans-serif;
+      margin:0;color:var(--text);
+      padding:40px 20px;
+      background:url('https://img.freepik.com/photos-gratuite/rendu-3d-lumieres-techno-science-fiction-futuristes-creant-formes-cool-fond-cool_181624-32814.jpg') center/cover fixed;
+      min-height:100vh;
+    }
+    .container{max-width:960px;margin:auto;}
+    header{text-align:center;margin-bottom:32px;}
+    h1{font-size:2.2rem;color:var(--accent);}
+    p{color:var(--muted);font-size:1.02rem;}
+
+    .card{
+      background:var(--card);padding:24px;border-radius:14px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.1);
+    }
+    .controls{
+      display:flex;gap:12px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;
+    }
+    button{
+      border:none;border-radius:10px;padding:10px 16px;
+      cursor:pointer;font-weight:600;transition:0.2s;
+    }
+    .primary{
+      background:linear-gradient(90deg,var(--accent),#38bdf8);
+      color:#fff;box-shadow:0 4px 10px rgba(0,123,255,0.3);
+    }
+    .primary:hover{transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,123,255,0.4);}
+    .ghost{
+      background:transparent;border:2px solid var(--accent);color:var(--accent);
+    }
+    .ghost:hover{background:rgba(0,123,255,0.05);}
+
+    #pdfButton{
+      margin:20px auto 0;padding:12px 20px;
+      background:linear-gradient(90deg,var(--success),#16a34a);
+      color:white;border:none;border-radius:10px;cursor:pointer;
+      font-weight:700;font-size:1rem;box-shadow:0 0 10px rgba(40,167,69,0.5);
+      display:block;
+    }
+    #pdfButton:hover{transform:scale(1.05);}
+
+    .progress{
+      height:16px;background:#e9ecef;border-radius:999px;
+      overflow:hidden;margin-bottom:18px;
+    }
+    .progress-bar{
+      height:100%;background:linear-gradient(90deg,var(--accent),var(--success));
+      width:0%;transition:width 0.4s ease;
+    }
+
+    .item{
+      background:var(--card);padding:14px;border-radius:10px;
+      margin-bottom:12px;border:1px solid var(--accent);
+      box-shadow:0 0 10px var(--neon);transition:0.3s;
+    }
+    .item:hover{box-shadow:0 0 20px var(--neon);}
+    .item-completed{
+      opacity:0.7;border-color:var(--success);box-shadow:none;
+    }
+    .question{font-weight:700;margin-bottom:8px;color:var(--accent);}
+    input[type=text]{
+      width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin-bottom:8px;
+    }
+    .feedback{font-size:0.95rem;}
+    .correct{color:var(--success);}
+    .incorrect{color:var(--error);}
+
+    .meta{
+      display:flex;justify-content:space-between;gap:12px;
+      color:var(--muted);font-size:0.95rem;margin-top:12px;
+    }
+    .loading-box { text-align: center; color: white; font-size: 1.5rem; margin-top: 50px; }
+    .error-box { text-align: center; color: #ff6b6b; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; }
+
+    @media(max-width:680px){.meta{flex-direction:column;align-items:center;}}
+  </style>
+</head>
+
+<body>
+  <div id="app" class="container">
+
+    <header>
+      <h1>🔬 Mini-défis Physique-Chimie</h1>
+      <p>Réponds correctement pour générer le PDF récapitulatif de tes réponses.</p>
+    </header>
+
+    <div v-if="loading" class="loading-box">Chargement des défis...</div>
+    <div v-if="error" class="error-box">{{ error }}</div>
+
+    <div class="card" v-if="!loading && !error">
+
+      <div class="controls">
+        <button :class="mode==='daily' ? 'primary' : 'ghost'" @click="switchMode('daily')">Quotidiens</button>
+        <button :class="mode==='weekly' ? 'primary' : 'ghost'" @click="switchMode('weekly')">Hebdomadaires</button>
+        <button class="ghost" @click="resetAll">Réinitialiser</button>
+      </div>
+
+      <div class="progress">
+        <div class="progress-bar" :style="{width:progressPercent+'%'}"></div>
+      </div>
+
+      <div class="meta">
+        <div>Mode : <strong>{{ mode==='daily' ? 'Quotidien' : 'Hebdomadaire' }}</strong></div>
+        <div>Complété : <strong>{{ done }}</strong> / {{ total }}</div>
+      </div>
+
+      <div class="list">
+        <div v-for="q in sortedChallenges"
+             :key="q.id"
+             :class="['item', isDone(q.id) ? 'item-completed' : '']">
+
+          <div class="question">{{ q.question }}</div>
+
+          <input type="text"
+                 v-model="answers[q.id]"
+                 :disabled="isDone(q.id)"
+                 @keypress.enter="validate(q.id)" />
+
+          <button class="ghost"
+                  @click="validate(q.id)"
+                  :disabled="isDone(q.id)">
+            Valider
+          </button>
+
+          <div class="feedback"
+               :class="{
+                 'correct': isDone(q.id),
+                 'incorrect': feedback[q.id]==='❌ Mauvaise réponse'
+               }">
+            {{ feedback[q.id] }}
+          </div>
+
+        </div>
+      </div>
+
+      <button id="pdfButton" @click="generateSummary">
+        📄 Télécharger le récapitulatif PDF
+      </button>
+
+    </div>
+  </div>
+
+  <script>
+  const { createApp } = Vue;
+
+  // NOUVEAU : Contenu du fichier challenges.json intégré ici
+  const CHALLENGE_DATA = {
+    "daily": [
+      {
+        "id": "d1",
+        "number": 1,
+        "question": "1. Quelle est la formule de la vitesse moyenne ?",
+        "answer": "v=d/t"
+      },
+      {
+        "id": "d2",
+        "number": 2,
+        "question": "2. Quelle est la charge de l'électron (en valeur absolue) ?",
+        "answer": "1.6 x 10e-19 C" // Simplifié
+      },
+      {
+        "id": "d3",
+        "number": 3,
+        "question": "3. Formule chimique de l'eau ?",
+        "answer": "H2O" // Simplifié
+      },
+      {
+        "id": "d4",
+        "number": 4,
+        "question": "4. Symbole du sodium ?",
+        "answer": "Na"
+      },
+      {
+        "id": "d5",
+        "number": 5,
+        "question": "5. Que mesure une balance ?",
+        "answer": "la masse"
+      },
+      {
+        "id": "d6",
+        "number": 6,
+        "question": "6. Unité de l’énergie ?",
+        "answer": "Joule" // Simplifié
+      },
+      {
+        "id": "d7",
+        "number": 7,
+        "question": "7. État de la matière le plus dense (pour la plupart des substances) ?",
+        "answer": "solide"
+      },
+      {
+        "id": "d8",
+        "number": 8,
+        "question": "8. Formule de la pression ?",
+        "answer": "P=F/S"
+      },
+      {
+        "id": "d9",
+        "number": 9,
+        "question": "9. Symbole chimique de l'oxygène ?",
+        "answer": "O"
+      },
+      {
+        "id": "d10",
+        "number": 10,
+        "question": "10. Unité de la puissance ?",
+        "answer": "Watt" // Simplifié
+      },
+      {
+        "id": "d11",
+        "number": 11,
+        "question": "11. Quelle est l'unité SI de la quantité de matière ?",
+        "answer": "la mole" // Simplifié
+      },
+      {
+        "id": "d12",
+        "number": 12,
+        "question": "12. Quel est le nom de la transformation liquide → gaz ?",
+        "answer": "vaporisation"
+      },
+      {
+        "id": "d13",
+        "number": 13,
+        "question": "13. Quel est le pH d'une solution neutre à 25°C ?",
+        "answer": "pH=7"
+      },
+      {
+        "id": "d14",
+        "number": 14,
+        "question": "14. Laquelle des forces suivantes est une force à distance : Tension, Poids, Friction ?",
+        "answer": "le poids"
+      },
+      {
+        "id": "d15",
+        "number": 15,
+        "question": "15. Qu'est-ce qu'un ion positif ?",
+        "answer": "un cation"
+      },
+      {
+        "id": "d16",
+        "number": 16,
+        "question": "16. Quel instrument mesure le courant électrique ?",
+        "answer": "Ampèremètre"
+      },
+      {
+        "id": "d17",
+        "number": 17,
+        "question": "17. L'accélération est-elle un vecteur ou un scalaire ?",
+        "answer": "un vecteur"
+      },
+      {
+        "id": "d18",
+        "number": 18,
+        "question": "18. Formule de l'énergie potentielle gravitationnelle ?",
+        "answer": "Ep=mgh"
+      },
+      {
+        "id": "d19",
+        "number": 19,
+        "question": "19. Combien de neutrons possède l'isotope Carbone-12 (¹²C) ?",
+        "answer": "6" // Simplifié
+      },
+      {
+        "id": "d20",
+        "number": 20,
+        "question": "20. Comment appelle-t-on le transfert thermique par contact direct de molécules ?",
+        "answer": "conduction"
+      },
+      {
+        "id": "d21",
+        "number": 21,
+        "question": "21. L'énergie cinétique dépend-elle de la vitesse ou de la position ?",
+        "answer": "de la vitesse"
+      },
+      {
+        "id": "d22",
+        "number": 22,
+        "question": "22. Quel est le rôle d'un catalyseur ?",
+        "answer": "accélérer une réaction"
+      },
+      {
+        "id": "d23",
+        "number": 23,
+        "question": "23. Quelle est la couleur de la lumière ayant la plus grande longueur d'onde visible ?",
+        "answer": "Rouge"
+      },
+      {
+        "id": "d24",
+        "number": 24,
+        "question": "24. L'unité SI de la quantité de mouvement est kg·m/s. Est-ce vrai ou faux ?",
+        "answer": "Vrai"
+      },
+      {
+        "id": "d25",
+        "number": 25,
+        "question": "25. Quel est le nom de la transformation gaz → liquide ?",
+        "answer": "liquefaction"
+      }
+    ],
+    "weekly": [
+      {
+        "id": "w1",
+        "number": 1,
+        "question": "1. L'unité de mesure de la quantité de matière dans le système international est :",
+        "answer": "la mole" // Simplifié
+      },
+      {
+        "id": "w2",
+        "number": 2,
+        "question": "2. Quel est le nom donné au déplacement orienté de charges électriques ?",
+        "answer": "courant électrique"
+      },
+      {
+        "id": "w3",
+        "number": 3,
+        "question": "3. Quel est l'élément qui a 6 protons dans son noyau ?",
+        "answer": "le carbone" // Simplifié
+      },
+      {
+        "id": "w4",
+        "number": 4,
+        "question": "4. Formule de la loi d'Ohm ?",
+        "answer": "U=R*I"
+      },
+      {
+        "id": "w5",
+        "number": 5,
+        "question": "5. Nom de l'énergie stockée dans une pile ou batterie ?",
+        "answer": "énergie chimique"
+      },
+      {
+        "id": "w6",
+        "number": 6,
+        "question": "6. Quelle grandeur physique est mesurée en Newtons (N) ?",
+        "answer": "la force" // Simplifié
+      },
+      {
+        "id": "w7",
+        "number": 7,
+        "question": "7. Quelle est l'équation d'état des gaz parfaits ?",
+        "answer": "PV=nRT" // Simplifié
+      },
+      {
+        "id": "w8",
+        "number": 8,
+        "question": "8. Quelle particule élémentaire porte une charge positive dans le noyau ?",
+        "answer": "le proton"
+      },
+      {
+        "id": "w9",
+        "number": 9,
+        "question": "9. Formule de l'énergie potentielle de pesanteur ?",
+        "answer": "Ep=mgh"
+      },
+      {
+        "id": "w10",
+        "number": 10,
+        "question": "10. Quel est l'effet d'une base forte sur le pH ?",
+        "answer": "le pH augmente"
+      },
+      {
+        "id": "w11",
+        "number": 11,
+        "question": "11. Comment appelle-t-on la déviation de la lumière en passant d'un milieu à un autre ?",
+        "answer": "réfraction"
+      },
+      {
+        "id": "w12",
+        "number": 12,
+        "question": "12. Quel est le nom du groupe fonctionnel -OH en chimie organique ?",
+        "answer": "groupe hydroxyle"
+      },
+      {
+        "id": "w13",
+        "number": 13,
+        "question": "13. Quelle est l'unité SI de la résistance électrique ?",
+        "answer": "l'Ohm" // Simplifié
+      },
+      {
+        "id": "w14",
+        "number": 14,
+        "question": "14. À quelle loi de Newton correspond 'tout corps persévère dans son état de repos ou de mouvement uniforme' ?",
+        "answer": "première loi" // Simplifié
+      },
+      {
+        "id": "w15",
+        "number": 15,
+        "question": "15. Quel est le pH d'une solution acide ?",
+        "answer": "pH < 7"
+      },
+      {
+        "id": "w16",
+        "number": 16,
+        "question": "16. Quel est le principal moyen de transfert thermique dans les fluides (liquides et gaz) ?",
+        "answer": "convection"
+      },
+      {
+        "id": "w17",
+        "number": 17,
+        "question": "17. Quel est le phénomène où la matière passe de solide à gaz directement ?",
+        "answer": "sublimation"
+      },
+      {
+        "id": "w18",
+        "number": 18,
+        "question": "18. Comment s'appelle une espèce chimique capable de capter un proton H⁺ ?",
+        "answer": "une base de Brønsted"
+      },
+      {
+        "id": "w19",
+        "number": 19,
+        "question": "19. Quelle est l'unité de la pression ?",
+        "answer": "le Pascal" // Simplifié
+      },
+      {
+        "id": "w20",
+        "number": 20,
+        "question": "20. La charge électrique d'un atome neutre est :",
+        "answer": "nulle" // Simplifié
+      },
+      {
+        "id": "w21",
+        "number": 21,
+        "question": "21. Selon la théorie de Lewis, qu'est-ce qu'une base de Lewis ?",
+        "answer": "donner une paire d'électrons" // Simplifié
+      },
+      {
+        "id": "w22",
+        "number": 22,
+        "question": "22. Qu'est-ce qu'un électronégativité ?",
+        "answer": "capacité d’un atome à attirer les électrons" // Simplifié
+      },
+      {
+        "id": "w23",
+        "number": 23,
+        "question": "23. Quelle est la relation entre la période (T) et la fréquence (f) d'une onde ?",
+        "answer": "T = 1/f"
+      },
+      {
+        "id": "w24",
+        "number": 24,
+        "question": "24. Quel est l'effet d'un champ magnétique sur une charge électrique en mouvement ?",
+        "answer": "force de Lorentz" // Simplifié
+      },
+      {
+        "id": "w25",
+        "number": 25,
+        "question": "25. L'énergie dégagée par une réaction est appelée énergie exothermique ou endothermique ?",
+        "answer": "exothermique"
+      },
+      {
+        "id": "w26",
+        "number": 26,
+        "question": "26. Quelle est l'unité SI de la tension électrique ?",
+        "answer": "le Volt" // Simplifié
+      },
+      {
+        "id": "w27",
+        "number": 27,
+        "question": "27. Quel est le nombre d'Avogadro (approx.) ?",
+        "answer": "6.022e23" // Simplifié
+      },
+      {
+        "id": "w28",
+        "number": 28,
+        "question": "28. Dans le vide, quelle est la relation entre la vitesse (c), la longueur d'onde (λ) et la fréquence (f) d'une onde électromagnétique ?",
+        "answer": "c = λf" // Simplifié
+      },
+      {
+        "id": "w29",
+        "number": 29,
+        "question": "29. Quel est le nom du composé C₆H₁₂O₆ ?",
+        "answer": "Glucose" // Simplifié
+      },
+      {
+        "id": "w30",
+        "number": 30,
+        "question": "30. Un corps plongé dans un fluide subit une force verticale vers le haut. Quel est le nom de cette force ?",
+        "answer": "Poussée d'Archimède"
+      }
+    ]
+  };
+
+ createApp({
+    data() {
+      return {
+        loading: false,
+        error: null,
+        mode: "daily",
+        challengesData: CHALLENGE_DATA,
+        progress: JSON.parse(localStorage.getItem("pc_progress_vue") || `{"daily":{},"weekly":{}}`),
+        feedback: {},
+        answers: JSON.parse(localStorage.getItem("pc_answers_vue") || `{}`),
+      };
+    },
+    mounted() {
+      // Restaure la progression et les réponses sauvegardées
+      if (!this.answers) this.answers = {};
+    },
+    computed: {
+      challenges() { return this.challengesData[this.mode] || []; },
+      done() { return Object.keys(this.progress[this.mode]).length; },
+      total() { return this.challenges.length; },
+      progressPercent() { return this.total === 0 ? 0 : Math.round(this.done / this.total * 100); },
+      sortedChallenges() {
+        const pending = this.challenges.filter(q => !this.progress[this.mode][q.id]);
+        const completed = this.challenges.filter(q => this.progress[this.mode][q.id]);
+        return [...pending.sort(() => Math.random() - 0.5), ...completed];
+      }
+    },
+    methods: {
+      normalize(s) { 
+        if (!s) return "";
+        return s.toLowerCase().trim()
+                .replace(/\s+/g, "")
+                .replace(/(\(|\)|,|'|")/g, "")
+                .replace(/[₂³⁴⁻¹⁹Ωλπ]/g, "");
+      },
+      saveProgress() { localStorage.setItem("pc_progress_vue", JSON.stringify(this.progress)); },
+      saveAnswers() { localStorage.setItem("pc_answers_vue", JSON.stringify(this.answers)); },
+      isDone(id) { return !!this.progress[this.mode][id]; },
+      switchMode(m) { this.mode = m; },
+      resetAll() {
+        if (confirm("Réinitialiser toutes les réponses ?")) {
+          this.progress = { daily: {}, weekly: {} };
+          this.feedback = {};
+          this.answers = {};
+          this.saveProgress();
+          this.saveAnswers();
+        }
+      },
+      validate(id) {
+        const q = this.challenges.find(x => x.id === id);
+        this.answers[id] = this.answers[id] || "";
+        const userAnswer = this.normalize(this.answers[id]);
+        const correctAnswer = this.normalize(q.answer);
+
+        if (userAnswer === correctAnswer) {
+          this.progress[this.mode][id] = true;
+          this.feedback[id] = "✅ Correct";
+        } else {
+          this.feedback[id] = "❌ Mauvaise réponse";
+        }
+
+        this.saveProgress();
+        this.saveAnswers();
+      },
+      generateSummary() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+        const margin = 15;
+        let y = 20;
+
+        const allChallenges = [...this.challengesData.daily, ...this.challengesData.weekly];
+        const correctCount = allChallenges.filter(q => this.normalize(this.answers[q.id]||"") === this.normalize(q.answer)).length;
+        const incorrectCount = allChallenges.length - correctCount;
+
+        // --- Titre ---
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        doc.text("Récapitulatif Mini-défis Physique-Chimie", 105, y, {align:"center"});
+        y += 10;
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        doc.text("Date : " + new Date().toLocaleDateString("fr-FR"), margin, y);
+        y += 6;
+        doc.text(`Réponses correctes : ${correctCount}`, margin, y);
+        y += 6;
+        doc.text(`Réponses incorrectes : ${incorrectCount}`, margin, y);
+        y += 10;
+
+        // --- Questions ---
+        allChallenges.forEach((q, i) => {
+          const answer = this.answers[q.id] || "(non répondu)";
+          const isCorrect = this.normalize(answer) === this.normalize(q.answer);
+
+          if (y > 270) { doc.addPage(); y = 20; }
+
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(0,0,0);
+          doc.text(`${i + 1}. ${q.question}`, margin, y);
+          y += 7;
+
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(isCorrect ? 0 : 220, 0, 0);
+          doc.text(`Réponse de l'élève : ${answer}`, margin + 5, y);
+          y += 6;
+
+          doc.setTextColor(0,128,0);
+          doc.text(`Bonne réponse : ${q.answer}`, margin + 5, y);
+          y += 8;
+        });
+
+        doc.save("MiniDefis_Recapitulatif.pdf");
+      }
+    }
+  }).mount("#app");
+  </script>
+</body>
+</html>

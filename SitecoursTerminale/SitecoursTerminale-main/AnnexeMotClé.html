@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQphyk9ejUn8W2sQ9h9tofy5rNyUdzq-5HSA&s">
+<title>Mot Clé Physique & Chimie</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<style>
+/* ======================= */
+/* VARIABLES FUTURISTES    */
+/* ======================= */
+:root {
+  --neon-blue: #00e5ff; /* Cyan très lumineux */
+  --neon-purple: #ae00ff; /* Magenta/Violet lumineux */
+  --card-bg: rgba(20, 20, 50, 0.7); /* Fond de carte semi-transparent */
+  --text-light: #e0e0e0;
+  --glow-blue-sm: 0 0 5px var(--neon-blue);
+  --glow-blue-lg: 0 0 10px var(--neon-blue), 0 0 20px rgba(0, 229, 255, 0.6);
+  --glow-purple-sm: 0 0 5px var(--neon-purple);
+  --glow-purple-lg: 0 0 15px var(--neon-purple), 0 0 30px rgba(174, 0, 255, 0.5);
+}
+
+body {
+  font-family:'Poppins',system-ui,sans-serif;
+  margin:0;
+  color:var(--text-light);
+  padding-top:80px;
+  /* Fond corrigé */
+  background: rgba(10,10,20,0.8) url('https://static.vecteezy.com/ti/vecteur-libre/p1/2792892-circuit-informatique-nuage-technologie-future-concept-fond-gratuit-vectoriel.jpg') center/cover fixed;
+  background-blend-mode: overlay; /* Pour assombrir l'image */
+  min-height:100vh;
+}
+/* ======================= */
+/* BANDEAU (NAVIGATION)    */
+/* ======================= */
+.bandeau { 
+  display:flex; justify-content:center; align-items:center; 
+  background: rgba(18, 18, 30, 0.95); /* Darker, almost black */
+  padding:1rem 2rem; position:fixed; top:0; left:0; width:100%; 
+  z-index:1000; 
+  box-shadow: 0 0 15px var(--neon-blue); /* Neon glow */
+  border-bottom: 1px solid var(--neon-blue);
+}
+.logo {
+  color: var(--neon-blue);
+  text-shadow: 0 0 5px var(--neon-blue);
+  font-weight: 700;
+}
+.menu-btn { 
+  background:none; border:none; 
+  color:var(--neon-blue); /* Neon color for icon */
+  font-size:1.8rem; cursor:pointer; 
+  text-shadow: 0 0 5px var(--neon-blue);
+}
+.menu-links { display:flex; gap:1rem; }
+.menu-links a { 
+  color:var(--text-light); 
+  text-decoration:none; font-weight:500; padding:0.3rem 0.6rem; 
+  border-radius:4px; transition: all 0.3s; 
+  border: 1px solid transparent;
+}
+.menu-links a:hover, .menu-links a.active { 
+  background: rgba(0, 229, 255, 0.1); /* Subtle neon background */
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 8px var(--neon-blue); /* Highlight */
+}
+header { 
+  text-align:center; padding:1rem; 
+  background: rgba(30, 30, 45, 0.7); /* Darker, semi-transparent */
+  margin-bottom:1rem; 
+  border-radius: 8px; /* Slightly sharper edges */
+  border: 1px solid var(--neon-blue);
+  box-shadow: var(--glow-blue-lg);
+}
+header h1 { color: var(--neon-blue); text-shadow: var(--glow-blue-sm); }
+
+/* ======================= */
+/* BOUTONS & CONTRÔLES     */
+/* ======================= */
+.category-buttons, .theme-buttons { text-align:center; margin:1rem 0; padding: 0 1rem; }
+.category-buttons button, .theme-buttons button, .sort-controls button { 
+  margin:0.2rem 0.5rem; padding:0.5rem 1rem; border:none; 
+  border-radius:4px; /* Sharper */
+  color:#fff; cursor:pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid transparent;
+  font-weight: 600;
+}
+/* Catégories (Violet Néon) */
+.category-buttons button { 
+  background: rgba(174, 0, 255, 0.6); 
+  box-shadow: var(--glow-purple-sm);
+}
+.category-buttons button:hover, .category-buttons button.active { 
+  background: var(--neon-purple); 
+  border-color: #e91e63; /* Pink accent */
+  box-shadow: 0 0 15px #e91e63;
+  transform: scale(1.05);
+}
+/* Thèmes (Bleu Néon) */
+.theme-buttons { margin-top: 0.5rem; display: flex; flex-wrap: wrap; justify-content: center; max-width: 1000px; margin-left: auto; margin-right: auto; }
+.theme-buttons button { 
+  background: rgba(0, 229, 255, 0.6); 
+  box-shadow: var(--glow-blue-sm);
+}
+.theme-buttons button:hover, .theme-buttons button.active { 
+  background: var(--neon-blue);
+  border-color: #00e5ff;
+  box-shadow: var(--glow-blue-lg);
+  transform: scale(1.05);
+}
+
+.search-bar { text-align:center; margin:1rem 0; }
+.search-bar input { 
+  width:60%; max-width:400px; padding:0.5rem 1rem; 
+  border-radius:4px; 
+  background: rgba(30, 30, 45, 0.8);
+  color: var(--text-light);
+  border: 1px solid var(--neon-blue);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+  font-size:1rem; 
+}
+.search-bar input::placeholder { color: rgba(224, 224, 224, 0.5); }
+
+.controls-row { display: flex; justify-content: center; align-items: center; gap: 1rem; padding: 0 1rem; max-width: 800px; margin: 1rem auto; }
+.sort-controls button { 
+  background: #4caf50; /* Green (Success/Ok) */
+  box-shadow: 0 0 5px #4caf50;
+}
+.sort-controls button:hover { 
+  background: #66bb6a;
+  box-shadow: 0 0 15px #66bb6a; 
+  border-color: #a5d6a7;
+}
+
+/* ======================= */
+/* CARTES (CARDS)          */
+/* ======================= */
+.container { display:flex; flex-wrap:wrap; justify-content:center; gap:1.5rem; padding:0 1rem 2rem 1rem; }
+.card { 
+  background: var(--card-bg); /* Semi-transparent dark card */
+  color:var(--text-light); 
+  border-radius:6px; /* Sharper */
+  width:220px; text-align:center; padding:1rem; cursor:pointer; 
+  transition: transform 0.3s, box-shadow 0.3s, border 0.3s; 
+  border: 1px solid rgba(0, 229, 255, 0.2); /* Subtle initial border */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+}
+.card img { 
+  width: 100%; 
+  height: 150px; /* image plus grande par défaut */
+  object-fit: contain; 
+  margin-bottom: 0.5rem; 
+  border-radius: 4px; 
+  background: #fff; 
+  border: 1px solid var(--neon-blue);
+  box-shadow: var(--glow-blue-sm);
+  transition: transform 0.3s, box-shadow 0.3s; /* effet smooth */
+}
+.card h3 { color: var(--neon-blue); text-shadow: 0 0 2px var(--neon-blue); }
+
+.card:hover { 
+  transform: scale(1.05) translateY(-5px); /* Stronger lift */
+  /* Strong neon glow on hover */
+  box-shadow: var(--glow-blue-lg);
+  border-color: var(--neon-blue);
+}
+/* Effet futuriste : image qui s’agrandit au survol */
+.card:hover img {
+  transform: scale(1.15); /* l'image grossit */
+  box-shadow: 0 0 15px var(--neon-blue), 0 0 30px rgba(0,229,255,0.5);
+}
+
+/* ======================= */
+/* MODALE (POP-UP)         */
+/* ======================= */
+.modal { 
+  position:fixed; top:0; left:0; width:100%; height:100%; 
+  background: rgba(0,0,0,0.9); /* More opaque dark */
+  display:flex; justify-content:center; align-items:center; z-index:2000; 
+  opacity:0; pointer-events:none; transition: opacity 0.3s; 
+}
+.modal.show { opacity:1; pointer-events:auto; }
+.modal-content { 
+  background: rgba(30, 30, 45, 0.98); /* Dark, opaque modal background */
+  padding:2rem; border-radius:10px; 
+  max-width:600px; width:90%; text-align:center; color:var(--text-light); 
+  /* Strong purple neon window effect */
+  border: 2px solid var(--neon-purple);
+  box-shadow: var(--glow-purple-lg);
+  position:relative; 
+}
+.modal-content img { 
+  max-width: 100%; height: auto; max-height: 1080px; margin: 15px auto; 
+  border-radius: 4px; display: block; 
+  border: 2px solid var(--neon-blue);
+  box-shadow: var(--glow-blue-sm);
+}
+.modal-content h2 { margin-bottom:1rem; color: var(--neon-purple); text-shadow: var(--glow-purple-sm); }
+
+.close-btn { 
+  position:absolute; top:10px; right:20px; font-size:2rem; cursor:pointer; 
+  color:var(--neon-purple); 
+  text-shadow: 0 0 5px var(--neon-purple);
+}
+
+.loading-msg, .error-msg { color: var(--neon-blue); text-shadow: var(--glow-blue-sm); }
+.error-msg { color: var(--neon-purple); text-shadow: var(--glow-purple-sm); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="bandeau">
+    <span class="logo">🔬 Mot Clés</span>
+    <button class="menu-btn" @click="isMenuOpen = !isMenuOpen">☰</button>
+    <div class="menu-links" :class="{show:isMenuOpen}">
+      <a href="index.html">Accueil</a>
+      <a href="1ere année.html">Cours</a>
+      <a href="Quiz de révision de 1ère Année.html">Quiz</a>
+      <a href="espaceNote.html">Notes</a>
+      <a href="AideAvecIA.html">IA</a>
+      <a href="MiniDéfi.html">Mini défi</a>
+      <a href="AnnexeMotClé.html" class="active">Mots-clés</a>
+      <a href="Connexion étudiant.html">Connexion</a>
+    </div>
+  </div>
+
+  <header><h1>Mot Clé Physique & Chimie</h1></header>
+
+  <div class="category-buttons">
+    <button :class="{active: currentCategory==='chimie'}" @click="selectCategory('chimie')">Chimie</button>
+    <button :class="{active: currentCategory==='physique'}" @click="selectCategory('physique')">Physique</button>
+  </div>
+
+  <div class="theme-buttons">
+    <button :class="{active: currentTheme === null}" @click="currentTheme = null">Tout Afficher</button>
+    <button v-for="theme in themeButtons" :key="theme" :class="{active: currentTheme === theme}" @click="currentTheme = theme">
+      {{ theme }}
+    </button>
+  </div>
+
+  <div class="controls-row">
+    <div class="search-bar">
+      <input type="text" v-model="searchTerm" placeholder="Rechercher une notion...">
+    </div>
+    <div class="sort-controls">
+      <button @click="toggleSortOrder">
+        Trier par Nom 
+        <span v-if="sortOrder === 'asc'">↓ (A-Z)</span>
+        <span v-else>↑ (Z-A)</span>
+      </button>
+    </div>
+  </div>
+
+  <div v-if="loading" class="loading-msg">Chargement des définitions...</div>
+  <div v-if="error" class="error-msg">{{ error }}</div>
+
+  <div class="container" v-if="!loading && !error">
+    <div class="card" v-for="item in filteredItems" :key="item.nom" @click="openModal(item)">
+      <img :src="item.img || 'https://via.placeholder.com/220x120?text=Image+non+disponible'" :alt="item.nom"> 
+      <h3>{{ item.nom }}</h3>
+      <small style="opacity: 0.7; display: block; margin-top: 5px;">{{ item.theme }}</small>
+    </div>
+  </div>
+
+  <div class="modal" :class="{show:isModalOpen}" @click.self="closeModal">
+    <div class="modal-content">
+      <span class="close-btn" @click="closeModal">×</span>
+      <h2>{{ selectedItem.nom }}</h2>
+      <img :src="selectedItem.img || 'https://via.placeholder.com/250?text=Image+non+disponible'" :alt="selectedItem.nom">
+      <p>{{ selectedItem.def }}</p>
+      <small style="opacity: 0.8; display: block; margin-top: 15px;">Thème: {{ selectedItem.theme }}</small>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const { createApp, ref, computed, onMounted } = Vue;
+
+// NOUVEAU : Contenu du fichier notion.json intégré ici
+const RAW_DATA = {
+  "chimie": [
+    {
+      "nom": "Acide de Brønsted",
+      "def": "Espèce capable de céder un proton H⁺.",
+      "img": "https://kronos-images.schoolmouv.fr/t-fnx-spc-c01-img02-.png"
+    },
+    {
+      "nom": "Alcane",
+      "def": "Hydrocarbure saturé avec uniquement des liaisons simples.",
+      "img": "https://www.universalis.fr/typo3temp/assets/_processed_/b/d/csm_v010702c_3ee2cedea5.webp"
+    },
+    {
+      "nom": "Alcène",
+      "def": "Hydrocarbure avec une double liaison C=C.",
+      "img": "https://magoerevision.com/imgUpload/imageExosMatiereidUrlInputtemps1588200454.png"
+    },
+    {
+      "nom": "Alcyne",
+      "def": "Hydrocarbure avec une triple liaison C$\\equiv$C.",
+      "img": "https://www.universalis.fr/typo3temp/assets/_processed_/0/d/csm_v010736_bc4b2ca581.webp"
+    },
+    {
+      "nom": "Anion",
+      "def": "Ion chargé négativement.",
+      "img": "https://www.geocities.ws/janevonne/images/anions.gif"
+    },
+    {
+      "nom": "Atome",
+      "def": "Plus petite unité de matière conservant les propriétés d’un élément.",
+      "img": "https://i.ytimg.com/vi/gcff_xpMeEQ/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGE4gZShlMA8=&rs=AOn4CLCUUh-Hsemarf-iXP8EUfwYWN1J7Q"
+    },
+    {
+      "nom": "Base de Brønsted",
+      "def": "Espèce capable de capter un proton H⁺.",
+      "img": "https://kronos-images.schoolmouv.fr/t-fnx-spc-c01-img02-.png"
+    },
+    {
+      "nom": "Catalyseur",
+      "def": "Substance qui accélère une réaction sans être consommée.",
+      "img": "https://www.fiches-auto.fr/sdoms/shiatsu/uploaded/echappement-catalyseur-transformation-3-voies-grand.gif"
+    },
+    {
+      "nom": "Cation",
+      "def": "Ion chargé positivement.",
+      "img": "https://general.chemistrysteps.com/wp-content/uploads/2022/04/Metals-That-Form-Cations-with-Different-Charges.png"
+    },
+    {
+      "nom": "Chaleur molaire",
+      "def": "Quantité de chaleur par mole pour un processus donné.",
+      "img": "https://i.ytimg.com/vi/vlC5OF_ffrU/sddefault.jpg"
+    },
+    {
+      "nom": "Concentration massique",
+      "def": "Masse de soluté par litre de solution (g/L).",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf0RPdawECANM8z564nxv8kLAmHC2KxR3j0Q&s"
+    },
+    {
+      "nom": "Concentration molaire (C)",
+      "def": "Quantité de matière par litre de solution (mol/L).",
+      "img": "https://www.aquaportail.com/pictures2308/concentration-molaire.jpg"
+    },
+    {
+      "nom": "Constante d’équilibre (K)",
+      "def": "Grandeur mesurant l’équilibre d’une réaction chimique.",
+      "img": "https://i.ytimg.com/vi/IidLHID95lA/maxresdefault.jpg"
+    },
+    {
+      "nom": "Couple redox",
+      "def": "Association oxydant / réducteur pour une réaction redox.",
+      "img": "https://beatricepresson.weebly.com/uploads/7/6/8/4/76842859/demi-quation-redox_orig.jpg"
+    },
+    {
+      "nom": "Dissociation",
+      "def": "Séparation d’un composé en ions dissous.",
+      "img": "https://www.aquaportail.com/pictures2111/dissociation.jpg"
+    },
+    {
+      "nom": "Électron",
+      "def": "Particule élémentaire chargée négativement autour du noyau.",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa4pSbYYCQBjN0ivswFjtJCO7k_SURHeoKpA&s"
+    },
+    {
+      "nom": "Électronégativité",
+      "def": "Capacité d’un atome à attirer les électrons d’une liaison.",
+      "img": "https://images.nagwa.com/figures/explainers/683160642483/1.svg"
+    },
+    {
+      "nom": "Équation chimique",
+      "def": "Écriture symbolique d’une réaction chimique.",
+      "img": "https://www.pccl.fr/physique_chimie_college_lycee/quatrieme/cours_exercices_corriges/equation_bilan_combustion_methane_600.jpg"
+    },
+    {
+      "nom": "Équilibre chimique",
+      "def": "État où les vitesses directe et inverse d’une réaction sont égales.",
+      "img": "https://www.vulgarisation-scientifique.com/wiki/uploads/Reaction_chimique.png"
+    },
+    {
+      "nom": "Fonction acide carboxylique",
+      "def": "Groupe –COOH présent sur une molécule.",
+      "img": "https://images.nagwa.com/figures/explainers/538125945025/7.svg"
+    },
+    {
+      "nom": "Fonction alcool",
+      "def": "Groupe –OH attaché à un atome de carbone.",
+      "img": "https://images.nagwa.com/figures/explainers/832120910256/9.svg"
+    },
+    {
+      "nom": "Fonction amine",
+      "def": "Groupe –NH₂ fixée à un squelette carboné.",
+      "img": "https://www.aquaportail.com/pictures1811/groupes-amines.jpg"
+    },
+    {
+      "nom": "Fonction ester",
+      "def": "Groupe –COO– reliant deux chaînes carbonées.",
+      "img": "https://webphysique.fr/wp-content/uploads/2017/07/groupe-caracteristique-ester.jpg"
+    },
+    {
+      "nom": "Gaz parfait",
+      "def": "Modèle de gaz obéissant à la loi PV = nRT.",
+      "img": "https://science-physique.com/wp-content/uploads/2024/06/GAZ_PARFAIT-1024x620.jpg"
+    },
+    {
+      "nom": "Hydrocarbure",
+      "def": "Molécule constituée seulement de carbone et d’hydrogène.",
+      "img": "https://images.nagwa.com/figures/explainers/506131871960/1.svg"
+    },
+    {
+      "nom": "Ion",
+      "def": "Atome ou groupe d’atomes ayant gagné ou perdu des électrons.",
+      "img": "https://etab.ac-poitiers.fr/coll-jules-michelet-angouleme/sites/coll-jules-michelet-angouleme/IMG/jpg/fiche_decrypter_formule_ion.jpg"
+    },
+    {
+      "nom": "Isomère",
+      "def": "Molécules ayant la même formule brute mais des formes différentes.",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4yxtGknJgyx8dOxlAV5koVkzoAtA7aatlQg&s"
+    },
+    {
+      "nom": "Liaison covalente",
+      "def": "Partage d’électrons entre deux atomes.",
+      "img": "https://cdn-blog.superprof.com/blog_ressources_fr/wp-content/uploads/2017/03/representation-lewis.png"
+    },
+    {
+      "nom": "Liaison hydrogène",
+      "def": "Interaction faible entre un H et un atome électronégatif.",
+      "img": "https://webphysique.fr/wp-content/uploads/2018/04/liaison-hydrogene-ethanol.jpg"
+    },
+    {
+      "nom": "Liaison ionique",
+      "def": "Attraction électrostatique entre ions de charges opposées.",
+      "img": "https://i.ytimg.com/vi/Mq0cT2HkaWs/maxresdefault.jpg"
+    },
+    {
+      "nom": "Mole",
+      "def": "Unité de la quantité de matière.",
+      "img": "https://i.ytimg.com/vi/8WKSzacpaE0/maxresdefault.jpg"
+    },
+    {
+      "nom": "Neutron",
+      "def": "Particule neutre dans le noyau atomique.",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToiXFWfR88ddqndWOS5bkmWrtZXqEErknUBA&s"
+    },
+    {
+      "nom": "Numéro atomique (Z)",
+      "def": "Nombre de protons dans le noyau.",
+      "img": "https://images.schoolmouv.fr/cycle4-pc-c14-img02.png"
+    },
+    {
+      "nom": "Oxydant",
+      "def": "Espèce capable de capter des électrons.",
+      "img": "https://beatricepresson.weebly.com/uploads/7/6/8/4/76842859/demi-quation-redox_orig.jpg"
+    },
+    {
+      "nom": "pH",
+      "def": "Mesure de l'acidité d'une solution.",
+      "img": "https://www.laurand.com/wp-content/uploads/2015/10/ph-acido-basique.jpg"
+    },
+    {
+      "nom": "Proton",
+      "def": "Particule chargée positivement dans le noyau.",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSmu3u-Zl90NxCxkAsCv43Tix6tuhsv0WzOw&s"
+    },
+    {
+      "nom": "Réducteur",
+      "def": "Espèce capable de céder des électrons.",
+      "img": "https://beatricepresson.weebly.com/uploads/7/6/8/4/76842859/demi-quation-redox_orig.jpg"
+    },
+    {
+      "nom": "Solubilité",
+      "def": "Quantité maximale de soluté qui peut être dissoute dans un solvant.",
+      "img": "https://www.aquaportail.com/pictures2110/solubilite.jpg"
+    },
+    {
+      "nom": "Solution",
+      "def": "Mélange homogène soluté + solvant.",
+      "img": "https://diy7ta1tt6jst.cloudfront.net/prod/okulus/24dadda4-adf2-4261-9d45-031296a559ac"
+    },
+    {
+      "nom": "Solution acide",
+      "def": "Solution dont le pH est inférieur à 7.",
+      "img": "https://kronos-images.schoolmouv.fr/t-fnx-spc-c02-img01.png"
+    },
+    {
+      "nom": "Solution basique",
+      "def": "Solution dont le pH est supérieur à 7.",
+      "img": "https://restez-curieux.ovh/wp-content/uploads/2022/04/20220402ph-1-1024x584.png"
+    },
+    {
+      "nom": "Solution neutre",
+      "def": "Solution dont le pH est égal à 7.",
+      "img": "https://images.nagwa.com/figures/explainers/828175832193/1.svg"
+    },
+    {
+      "nom": "Solution tampon",
+      "def": "Solution qui résiste aux variations de pH lors d’ajout d’acide ou base.",
+      "img": "https://www.aquaportail.com/pictures2212/tampon-buffer.jpg"
+    },
+    {
+      "nom": "Soluté",
+      "def": "Substance dissoute dans le solvant pour former la solution.",
+      "img": "https://parlonssciences.ca/sites/default/files/styles/width_800px/public/2020-06/solutes_et_solvants.jpg?itok=HoY-qSHw"
+    },
+    {
+      "nom": "Solvant",
+      "def": "Liquide qui dissout le soluté.",
+      "img": "https://parlonssciences.ca/sites/default/files/styles/width_800px/public/2020-06/solutes_et_solvants.jpg?itok=HoY-qSHw"
+    },
+    {
+      "nom": "Taux d'avancement",
+      "def": "Rapport entre l'avancement maximal et l'avancement final d'une réaction chimique.",
+      "img": "https://www.maxicours.com/se/media/img/1/5/8/6/158696.gif"
+    },
+    {
+      "nom": "Titrage",
+      "def": "Méthode pour déterminer la concentration d'une espèce chimique.",
+      "img": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Sch%C3%A9ma_titrage_conductim%C3%A9trique.jpg"
+    }
+  ],
+  "physique": [
+    {
+      "nom": "Accélération",
+      "def": "Dérivée du vecteur vitesse par rapport au temps.",
+      "img": "https://www.wikihow.com/images_en/thumb/3/36/728025-1-1.jpg/v4-460px-728025-1-1.jpg"
+    },
+    {
+      "nom": "Champ électrique",
+      "def": "Zone d'influence d'une charge électrique.",
+      "img": "https://i.ytimg.com/vi/8g8HbrRVxf0/sddefault.jpg"
+    },
+    {
+      "nom": "Champ magnétique",
+      "def": "Zone d'influence d'un aimant ou d'un courant électrique.",
+      "img": "https://images.schoolmouv.fr/2nd-spc-c13-img01.png"
+    },
+    {
+      "nom": "Charge électrique (Q)",
+      "def": "Propriété fondamentale de la matière.",
+      "img": "https://i.ytimg.com/vi/HhuSw8dfjzE/sddefault.jpg"
+    },
+    {
+      "nom": "Circuit électrique",
+      "def": "Boucle conductrice permettant le passage du courant.",
+      "img": "https://images.schoolmouv.fr/2nd-spc-c12-img01.png"
+    },
+    {
+      "nom": "Condensateur",
+      "def": "Composant électronique qui stocke l’énergie électrique.",
+      "img": "https://i.ytimg.com/vi/kHUk3P36TgY/sddefault.jpg"
+    },
+    {
+      "nom": "Conduction",
+      "def": "Transfert de chaleur par contact direct de molécules.",
+      "img": "https://images.schoolmouv.fr/2nd-spc-c04-img01.png"
+    },
+    {
+      "nom": "Constante de Planck (h)",
+      "def": "Constante fondamentale en mécanique quantique.",
+      "img": "https://www.shutterstock.com/image-vector/plancks-equation-physics-photon-energy-260nw-2327505169.jpg"
+    },
+    {
+      "nom": "Constante gravitationnelle (G)",
+      "def": "Constante universelle intervenant dans la loi de gravité.",
+      "img": "https://trustmyscience.com/wp-content/uploads/2021/03/loi-gravitation-universelle-newton.jpeg"
+    },
+    {
+      "nom": "Convection",
+      "def": "Transfert de chaleur par déplacement de fluide.",
+      "img": "https://parlonssciences.ca/sites/default/files/2021-01/Courants_de_convection.png"
+    },
+    {
+      "nom": "Couple moteur",
+      "def": "Force de rotation exercée par un couple appliqué à un objet.",
+      "img": "https://mobylette.mobcustom.com/upload/logos/391-definition-du-couple-moteur.jpg"
+    },
+    {
+      "nom": "Courant électrique",
+      "def": "Déplacement orienté de charges électriques.",
+      "img": "https://images.schoolmouv.fr/2nd-spc-c12-img01.png"
+    },
+    {
+      "nom": "Densité",
+      "def": "Rapport entre la masse volumique d'un corps et celle d’un corps de référence.",
+      "img": "https://www.editions-petiteelisabeth.fr/images/infos/densite_chimie.png?1466422759"
+    },
+    {
+      "nom": "Dioptre",
+      "def": "Surface séparant deux milieux transparents différents (ex: air/eau).",
+      "img": "https://monde.ccdmd.qc.ca/media/image1024/122337.jpg"
+    },
+    {
+      "nom": "Énergie cinétique (Ec)",
+      "def": "Énergie liée au mouvement d'un corps (Ec = 1/2 mv²).",
+      "img": "https://lh3.googleusercontent.com/proxy/iOW4wwL3k8NNer8N51KroDMBlZdhhZlomw4LIMUXYYCsBh5VNGHCCVAfqwsWMOzupmVaZgKGVJKNzHLTe94kAn5qLgL21gprhnxOE1h3l18"
+    },
+    {
+      "nom": "Énergie potentielle (Ep)",
+      "def": "Énergie stockée en raison de la position d'un corps (Ep = mgh).",
+      "img": "https://lh5.googleusercontent.com/proxy/V4LJoMn0OHgSRCpNBo6ktnjT4Aymh2oG8EXHRSH0-6hr2tpoTB7JlQl8Dpzal1FZcxtLoHyN2tzi6lBSb5Q-rDgGiJFwijU8OCh4906wloQ"
+    },
+    {
+      "nom": "Force",
+      "def": "Action mécanique capable de modifier le mouvement d'un corps.",
+      "img": "https://cdn.gcsesciencedictionary.co.uk/examples/images/7/detailed-227-1499353421-808.jpg"
+    },
+    {
+      "nom": "Fréquence (f)",
+      "def": "Nombre de cycles par seconde (unité : Hertz, Hz).",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0yALyG-oDQ_oaVi2en_p8V9ZFeOhA-CZBoQ&s"
+    },
+    {
+      "nom": "Lentille",
+      "def": "Composant optique qui dévie les rayons lumineux pour former une image.",
+      "img": "https://lh3.googleusercontent.com/proxy/SKJZXe3q9kzaABFzlYelflH4L4rOxlvJHF1ocoWN0RDNGGGxaCzNfhOdK4631vcW1GDoz-xsFi2aMIs8Se-LzjS1s_X4ZataALCdWuswdBA"
+    },
+    {
+      "nom": "Loi d’Ohm",
+      "def": "Relation U = R $\\times$ I entre tension, courant et résistance.",
+      "img": "https://i.ytimg.com/vi/sCZK5gDZROE/oar2.jpg?sqp=-oaymwEYCJUDENAFSFqQAgHyq4qpAwcIARUAAIhC&rs=AOn4CLA6S_jSWhhEpwKZ_24pjB-jJ-Q"
+    },
+    {
+      "nom": "Loi de Snell-Descartes",
+      "def": "Décrit la réfraction de la lumière à l'interface de deux milieux.",
+      "img": "https://www.methodephysique.fr/loi_descartes_refraction.jpg"
+    },
+    {
+      "nom": "Longueur d’onde (lambda)",
+      "def": "Distance parcourue par l'onde pendant une période.",
+      "img": "https://i.ytimg.com/vi/XIk_r-MosIk/maxresdefault.jpg"
+    },
+    {
+      "nom": "Masse volumique(rho)",
+      "def": "Masse par unité de volume.",
+      "img": "https://i.ytimg.com/vi/NTAvX1zm1fI/hq720_2.jpg?sqp=-oaymwEYCJYDENAFSFryq4qpAwoIARUAAIhC0AEB&rs=AOn4CLAIxom879t6rSnBaHyNx90aP6l7qw"
+    },
+    {
+      "nom": "Onde",
+      "def": "Perturbation qui se propage sans transport de matière.",
+      "img": "https://www.methodephysique.fr/mesure_periodebis.jpg"
+    },
+    {
+      "nom": "Puissance (P)",
+      "def": "Débit d'énergie (P = W/t).",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf0RPdawECANM8z564nxv8kLAmHC2KxR3j0Q&s"
+    },
+    {
+      "nom": "Rayonnement",
+      "def": "Transfert d’énergie par ondes électromagnétiques.",
+      "img": "https://images.schoolmouv.fr/2nd-spc-c04-img01.png"
+    },
+    {
+      "nom": "Réfraction",
+      "def": "Changement de direction d'une onde traversant deux milieux différents.",
+      "img": "https://e-cours.univ-paris1.fr/modules/uved/envcal/html/rayonnement/2-rayonnement-matiere/ressources/images/refraction.png"
+    },
+    {
+      "nom": "Résistance électrique",
+      "def": "Propriété d’un matériau qui limite le passage du courant.",
+      "img": "https://www.leradioscope.fr/images/cours_radioamateurs/roue_electrique_02.png"
+    },
+    {
+      "nom": "Spectre lumineux",
+      "def": "Distribution des longueurs d’onde de la lumière visible.",
+      "img": "https://images.schoolmouv.fr/2nd-spc-c14-img01.png"
+    },
+    {
+      "nom": "Température",
+      "def": "Mesure de l’agitation thermique des particules d’un corps.",
+      "img": "https://www.science.lu/sites/default/files/styles/large/public/temperatur_fr.jpg?itok=na0WzTF4"
+    },
+    {
+      "nom": "Tension électrique",
+      "def": "Différence de potentiel entre deux points.",
+      "img": "https://sciencesphysiquesdebussy.wordpress.com/wp-content/uploads/2018/12/ar2-e1-11-e1543758357285.jpg?w=740"
+    },
+    {
+      "nom": "Transfert thermique",
+      "def": "Mouvement d’énergie calorifique entre systèmes différents.",
+      "img": "https://i.ytimg.com/vi/duSIIf0TjUg/maxresdefault.jpg"
+    },
+    {
+      "nom": "Vitesse",
+      "def": "Dérivée de la position par rapport au temps.",
+      "img": "https://sciencesphysiques.e-monsite.com/medias/images/formule-vitesse.png"
+    }
+  ]
+};
+
+function assignTheme(nom, category) {
+  nom = nom.toLowerCase();
+  if (category==='chimie') {
+    if (/atome|électron|proton|neutron|numéro atomique|ion|cation|anion/.test(nom)) return 'Structure Atomique';
+    if (/mole|concentration|solution|soluté|solvant|titrage|masse molaire/.test(nom)) return 'Quantité de Matière';
+    if (/oxyd|réduct|redox/.test(nom)) return 'Réactions Redox';
+    if (/acide|base|ph|neutralisation|tampon/.test(nom)) return 'Acides et Bases';
+    if (/liaison|molécule|ion|électronégativité|polarité/.test(nom)) return 'Liaisons Chimiques';
+    if (/hydrocarbure|alcane|alcène|alcyne|fonction|isomère|polymère/.test(nom)) return 'Chimie Organique';
+    return 'Thermodynamique & Général';
+  }
+  if (category==='physique') {
+    if (/vitesse|accélération|mouvement|force|poids|gravitation|pendule|oscillation|quantité de mouvement/.test(nom)) return 'Mécanique Classique';
+    if (/énergie|travail|puissance|couple moteur|impulsion/.test(nom)) return 'Énergie & Travail';
+    if (/charge|courant|tension|résistance électrique|loi d’ohm|champ|circuit|condensateur|bobine|diode/.test(nom)) return 'Électromagnétisme';
+    if (/onde|longueur d’onde|fréquence|réflexion|réfraction|diffraction|lentille|focale|spectre/.test(nom)) return 'Ondes & Optique';
+    if (/température|chaleur|pression|gaz parfait|conduction|convection|rayonnement thermique/.test(nom)) return 'Thermodynamique & Fluides';
+    if (/radioactivité|nucléaire/.test(nom)) return 'Physique Nucléaire';
+    return 'Général';
+  }
+  return 'Non classé';
+}
+
+// CORRECTION MAJEURE: Cette fonction retourne désormais une LISTE PLATE de notions.
+function groupNotionsByTheme(flatData, category) {
+  return flatData.map(item => {
+    // S'assure que le champ `theme` est inclus dans chaque objet notion
+    const themeName = assignTheme(item.nom, category) || "Non classé";
+    return { ...item, theme: themeName };
+  });
+}
+
+createApp({
+  setup() {
+    const isMenuOpen = ref(false);
+    const currentCategory = ref('chimie');
+    const currentTheme = ref(null); 
+    const searchTerm = ref('');
+    const isModalOpen = ref(false);
+    const selectedItem = ref({nom:'', def:'', img:'', theme:''}); 
+    const sortOrder = ref('asc');
+    const loading = ref(true);
+    const error = ref(null);
+    // categories contiendra les listes plates traitées (ex: { chimie: [notion1, notion2...], physique: [...] })
+    const categories = ref({ chimie: [], physique: [] });
+
+    // MODIFICATION: La fonction fetchNotions utilise maintenant les données embarquées
+    const fetchNotions = async () => {
+      // Le chargement est plus rapide
+      error.value = null;
+      try {
+        // ANCIEN CODE SUPPRIMÉ: const response = await fetch('notion.json');
+        // ANCIEN CODE SUPPRIMÉ: if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
+        // ANCIEN CODE SUPPRIMÉ: const RAW_DATA = await response.json();
+        
+        const rawChimie = RAW_DATA.chimie || [];
+        const rawPhysique = RAW_DATA.physique || [];
+        
+        // Stockage des listes plates de notions (avec thème inclus)
+        categories.value = {
+          chimie: groupNotionsByTheme(rawChimie, 'chimie'),
+          physique: groupNotionsByTheme(rawPhysique, 'physique')
+        };
+      } catch(err) {
+        console.error("Erreur de traitement des données JSON:", err);
+        error.value = "Erreur interne lors du traitement des définitions.";
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    const selectCategory = (cat) => { 
+      currentCategory.value = cat; 
+      currentTheme.value = null; // Réinitialise le thème
+    };
+    const toggleSortOrder = () => { sortOrder.value = sortOrder.value==='asc'?'desc':'asc'; };
+
+    // CORRECTION: Extraction des thèmes uniques à partir de la LISTE PLATE
+    const themeButtons = computed(() => {
+      const currentItems = categories.value[currentCategory.value];
+      if (!currentItems) return [];
+      // Utilisation d'un Set pour obtenir les thèmes uniques
+      const themes = new Set(currentItems.map(t => t.theme));
+      return Array.from(themes).sort();
+    });
+
+    // CORRECTION: Simplification du filtrage pour travailler avec la LISTE PLATE
+    const filteredItems = computed(() => {
+      const currentItems = categories.value[currentCategory.value]; // C'est maintenant la liste plate
+      if (!currentItems) return [];
+      
+      let results = currentItems;
+      const term = searchTerm.value.toLowerCase();
+      const selTheme = currentTheme.value;
+      
+      // Filtrage par thème et recherche
+      results = results.filter(n => 
+        (selTheme === null || n.theme === selTheme) && 
+        (n.nom.toLowerCase().includes(term) || n.def.toLowerCase().includes(term))
+      );
+      
+      // Tri
+      results.sort((a,b)=>{
+        const nameA = a.nom.toLowerCase(), nameB = b.nom.toLowerCase();
+        if(nameA<nameB) return sortOrder.value==='asc'?-1:1;
+        if(nameA>nameB) return sortOrder.value==='asc'?1:-1;
+        return 0;
+      });
+      return results;
+    });
+
+    const openModal = (item) => {
+      // Nettoyage des chaînes LaTeX/Unicode pour l'affichage
+      selectedItem.value = { ...item,
+        def: item.def
+            .replace(/\\times 10\^{23}/g, ' × 10²³')
+            .replace(/\\times/g,'×')
+            .replace(/H\⁺/g,'H⁺')
+            .replace(/\\equiv/g,'≡')
+            .replace(/\\to/g,'→')
+            // Ajout d'une gestion des exposants simples si besoin
+            .replace(/\^(\d+)/g, (match, p1) => {
+                const map = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+                return p1.split('').map(c => map[c] || c).join('');
+            })
+      };
+      isModalOpen.value = true;
+    };
+    const closeModal = () => { isModalOpen.value = false; selectedItem.value = {nom:'', def:'', img:'', theme:''}; };
+
+    onMounted(fetchNotions);
+
+    return { isMenuOpen, currentCategory, selectCategory, currentTheme, themeButtons, searchTerm, filteredItems,
+      openModal, closeModal, isModalOpen, selectedItem, loading, error, sortOrder, toggleSortOrder
+    };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>
